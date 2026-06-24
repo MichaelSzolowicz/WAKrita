@@ -339,6 +339,19 @@ void KisToolFreehandHelper::initPaintImpl(qreal startAngle,
                                       0);
     KisDistanceInformation startDist = startDistInfo.makeDistInfo();
 
+    // Begin primary brush
+    createPainters(m_d->strokeInfos,
+                   startDist);
+
+    KisStrokeStrategy *stroke =
+        new FreehandStrokeStrategy(m_d->resources,
+                                   m_d->strokeInfos,
+                                   m_d->transactionText,
+                                   FreehandStrokeStrategy::SupportsContinuedInterstrokeData |
+                                   FreehandStrokeStrategy::SupportsTimedMergeId);
+
+    m_d->strokeId = m_d->strokesFacade->startStroke(stroke);
+
     // Begin dual brush impl
 
     // Multiple bools for testing purposes only, to make values easy to see in debugger.
@@ -366,19 +379,6 @@ void KisToolFreehandHelper::initPaintImpl(qreal startAngle,
 
         m_d->secondStrokeId = m_d->strokesFacade->startStroke(secondStroke);
     }
-
-    // Begin primary brush
-    createPainters(m_d->strokeInfos,
-                   startDist);
-
-    KisStrokeStrategy *stroke =
-        new FreehandStrokeStrategy(m_d->resources,
-                                   m_d->strokeInfos,
-                                   m_d->transactionText,
-                                   FreehandStrokeStrategy::SupportsContinuedInterstrokeData |
-                                   FreehandStrokeStrategy::SupportsTimedMergeId);
-
-    m_d->strokeId = m_d->strokesFacade->startStroke(stroke);
 
     m_d->history.clear();
     m_d->distanceHistory.clear();
@@ -1072,6 +1072,7 @@ void KisToolFreehandHelper::paintLine(int strokeInfoId,
                                       const KisPaintInformation &pi2)
 {
     m_d->hasPaintAtLeastOnce = true;
+
     m_d->strokesFacade->addJob(m_d->strokeId,
                                new FreehandStrokeStrategy::Data(strokeInfoId, pi1, pi2));
 
