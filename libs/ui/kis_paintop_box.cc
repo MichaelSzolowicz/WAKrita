@@ -522,6 +522,10 @@ KisPaintopBox::KisPaintopBox(KisViewManager *viewManager, QWidget *parent, const
 
     connect(alphaLockAction      , SIGNAL(toggled(bool))                    , SLOT(slotToggleAlphaLockMode(bool)));
 
+    m_disableDualBrush = m_viewManager->actionManager()->createAction("disable_dualbrush");
+    connect(m_disableDualBrush  , SIGNAL(toggled(bool))                    , SLOT(slotDisableDualBrush(bool)));
+    m_disableDualBrush->setChecked(true);
+
     m_disablePressureAction = m_viewManager->actionManager()->createAction("disable_pressure");
     connect(m_disablePressureAction  , SIGNAL(toggled(bool))                    , SLOT(slotDisablePressureMode(bool)));
     m_disablePressureAction->setChecked(true);
@@ -1401,6 +1405,16 @@ void KisPaintopBox::slotDisablePressureMode(bool checked)
     }
 
     m_resourceProvider->setDisablePressure(checked);
+}
+
+void KisPaintopBox::slotDisableDualBrush(bool checked)
+{
+    if(checked) {
+        //m_disableDualBrush->setIcon(KisIconUtils::loadIcon("transform_icons_penPressure"));
+    }
+    else {
+        //m_disableDualBrush->setIcon(KisIconUtils::loadIcon("transform_icons_penPressure_locked"));
+    }
 }
 
 void KisPaintopBox::slotReloadPreset()
