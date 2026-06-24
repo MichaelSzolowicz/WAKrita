@@ -567,6 +567,16 @@ bool KisCanvasResourceProvider::disableDualBrush() const
     return m_resourceManager->resource(KoCanvasResource::DisableDualBrush).toBool();
 }
 
+void KisCanvasResourceProvider::setEditSecondBrush(bool value)
+{
+    m_resourceManager->setResource(KoCanvasResource::EditSecondBrush, value);
+}
+
+bool KisCanvasResourceProvider::editSecondBrush() const
+{
+    return m_resourceManager->resource(KoCanvasResource::EditSecondBrush).toBool();
+}
+
 void KisCanvasResourceProvider::setTextPropertyData(KoSvgTextPropertyData data)
 {
     m_resourceManager->setResource(KoCanvasResource::SvgTextPropertyData, QVariant::fromValue(data));

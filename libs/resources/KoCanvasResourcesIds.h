@@ -57,6 +57,7 @@ enum CanvasResourceId {
     GlobalAlphaLock,
     DisablePressure,
     DisableDualBrush,
+    EditSecondBrush,
     PreviousPaintOpPreset,
     EffectiveZoom, ///<-Used only by painting tools for non-displaying purposes
     EffectivePhysicalZoom, ///<-Used by tool for displaying purposes

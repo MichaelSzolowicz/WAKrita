@@ -137,6 +137,9 @@ public:
     void setDisableDualBrush(bool value);
     bool disableDualBrush() const;
 
+    void setEditSecondBrush(bool value);
+    bool editSecondBrush() const;
+
     void setTextPropertyData(KoSvgTextPropertyData data);
     KoSvgTextPropertyData textPropertyData() const;
 

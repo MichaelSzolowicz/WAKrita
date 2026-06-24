@@ -522,13 +522,15 @@ KisPaintopBox::KisPaintopBox(KisViewManager *viewManager, QWidget *parent, const
 
     connect(alphaLockAction      , SIGNAL(toggled(bool))                    , SLOT(slotToggleAlphaLockMode(bool)));
 
-    m_disableDualBrush = m_viewManager->actionManager()->createAction("disable_dualbrush");
-    connect(m_disableDualBrush  , SIGNAL(toggled(bool))                    , SLOT(slotDisableDualBrush(bool)));
-    m_disableDualBrush->setChecked(true);
-
     m_disablePressureAction = m_viewManager->actionManager()->createAction("disable_pressure");
     connect(m_disablePressureAction  , SIGNAL(toggled(bool))                    , SLOT(slotDisablePressureMode(bool)));
     m_disablePressureAction->setChecked(true);
+
+    m_disableDualBrushAction = m_viewManager->actionManager()->createAction("disable_dualbrush");
+    connect(m_disableDualBrushAction  , SIGNAL(toggled(bool))                    , SLOT(slotDisableDualBrush(bool)));
+
+    m_editSecondBrushAction = m_viewManager->actionManager()->createAction("edit_second_brush");
+    connect(m_editSecondBrushAction   , SIGNAL(toggled(boo))                     , SLOT(slotEditSecondBrush(bool)));
 
     connect(m_hMirrorAction        , SIGNAL(toggled(bool))                    , SLOT(slotHorizontalMirrorChanged(bool)));
     connect(m_vMirrorAction        , SIGNAL(toggled(bool))                    , SLOT(slotVerticalMirrorChanged(bool)));
@@ -1410,6 +1412,11 @@ void KisPaintopBox::slotDisablePressureMode(bool checked)
 void KisPaintopBox::slotDisableDualBrush(bool checked)
 {
     m_resourceProvider->setDisableDualBrush(checked);
+}
+
+void KisPaintopBox::slotEditSecondBrush(bool checked)
+{
+    m_resourceProvider->setEditSecondBrush(checked);
 }
 
 void KisPaintopBox::slotReloadPreset()
