@@ -203,7 +203,10 @@ void KisCanvasResourceProvider::setPaintOpPreset(const KisPaintOpPresetSP preset
     if (!preset) return;
     QVariant v;
     v.setValue(preset);
-    m_resourceManager->setResource(KoCanvasResource::CurrentPaintOpPreset, v);
+
+    KoCanvasResource::CanvasResourceId resource = m_resourceManager->resource(KoCanvasResource::EditSecondBrush).toBool() ? KoCanvasResource::CurrentSecondPaintOpPreset : KoCanvasResource::CurrentPaintOpPreset;
+
+    m_resourceManager->setResource(resource, v);
 
     Q_EMIT sigPaintOpPresetChanged(preset);
 }

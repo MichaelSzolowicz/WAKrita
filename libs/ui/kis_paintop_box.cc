@@ -530,7 +530,7 @@ KisPaintopBox::KisPaintopBox(KisViewManager *viewManager, QWidget *parent, const
     connect(m_disableDualBrushAction  , SIGNAL(toggled(bool))                    , SLOT(slotDisableDualBrush(bool)));
 
     m_editSecondBrushAction = m_viewManager->actionManager()->createAction("edit_second_brush");
-    connect(m_editSecondBrushAction   , SIGNAL(toggled(boo))                     , SLOT(slotEditSecondBrush(bool)));
+    connect(m_editSecondBrushAction   , SIGNAL(toggled(bool))                     , SLOT(slotEditSecondBrush(bool)));
 
     connect(m_hMirrorAction        , SIGNAL(toggled(bool))                    , SLOT(slotHorizontalMirrorChanged(bool)));
     connect(m_vMirrorAction        , SIGNAL(toggled(bool))                    , SLOT(slotVerticalMirrorChanged(bool)));
