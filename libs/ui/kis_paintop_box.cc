@@ -1409,12 +1409,7 @@ void KisPaintopBox::slotDisablePressureMode(bool checked)
 
 void KisPaintopBox::slotDisableDualBrush(bool checked)
 {
-    if(checked) {
-        //m_disableDualBrush->setIcon(KisIconUtils::loadIcon("transform_icons_penPressure"));
-    }
-    else {
-        //m_disableDualBrush->setIcon(KisIconUtils::loadIcon("transform_icons_penPressure_locked"));
-    }
+    m_resourceProvider->setDisableDualBrush(checked);
 }
 
 void KisPaintopBox::slotReloadPreset()

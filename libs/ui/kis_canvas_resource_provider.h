@@ -134,6 +134,9 @@ public:
     void setDisablePressure(bool value);
     bool disablePressure() const;
 
+    void setDisableDualBrush(bool value);
+    bool disableDualBrush() const;
+
     void setTextPropertyData(KoSvgTextPropertyData data);
     KoSvgTextPropertyData textPropertyData() const;
 

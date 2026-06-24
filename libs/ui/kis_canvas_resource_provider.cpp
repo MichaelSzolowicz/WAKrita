@@ -557,6 +557,16 @@ bool KisCanvasResourceProvider::disablePressure() const
     return m_resourceManager->resource(KoCanvasResource::DisablePressure).toBool();
 }
 
+void KisCanvasResourceProvider::setDisableDualBrush(bool value)
+{
+    m_resourceManager->setResource(KoCanvasResource::DisableDualBrush, value);
+}
+
+bool KisCanvasResourceProvider::disableDualBrush() const
+{
+    return m_resourceManager->resource(KoCanvasResource::DisableDualBrush).toBool();
+}
+
 void KisCanvasResourceProvider::setTextPropertyData(KoSvgTextPropertyData data)
 {
     m_resourceManager->setResource(KoCanvasResource::SvgTextPropertyData, QVariant::fromValue(data));
