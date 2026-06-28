@@ -72,8 +72,11 @@ struct KisToolFreehandHelper::Private
     QTimer strokeTimeoutTimer;
 
     QVector<KisFreehandStrokeInfo*> strokeInfos;
+    QVector<KisFreehandStrokeInfo*> secondStrokeInfos;
     KisResourcesSnapshotSP resources;
+    KisResourcesSnapshotSP secondaryResources;
     KisStrokeId strokeId;
+    KisStrokeId secondStrokeId;
 
     KisPaintInformation previousPaintInformation;
     // Used only by basic, weighted and pixel smoothing.
@@ -112,6 +115,11 @@ struct KisToolFreehandHelper::Private
     KisStabilizerDelayedPaintHelper stabilizerDelayedPaintHelper;
 
     qreal effectiveSmoothnessDistance(qreal speed) const;
+
+    bool useDualBrush;
+
+    // For testing purposes only, to make values easy to see in debugger.
+    bool b1, b2, b3;
 
     bool isTentativePixel(const QPoint &currentPixelPos) const
     {
@@ -331,6 +339,7 @@ void KisToolFreehandHelper::initPaintImpl(qreal startAngle,
                                       0);
     KisDistanceInformation startDist = startDistInfo.makeDistInfo();
 
+    // Begin primary brush
     createPainters(m_d->strokeInfos,
                    startDist);
 
@@ -342,6 +351,34 @@ void KisToolFreehandHelper::initPaintImpl(qreal startAngle,
                                    FreehandStrokeStrategy::SupportsTimedMergeId);
 
     m_d->strokeId = m_d->strokesFacade->startStroke(stroke);
+
+    // Begin dual brush impl
+
+    // Multiple bools for testing purposes only, to make values easy to see in debugger.
+    m_d->b1 = !resourceManager->resource(KoCanvasResource::DisableDualBrush).toBool();
+    m_d->b2 = !(resourceManager->resource(KoCanvasResource::PreviousKritaNode).value<KisNodeWSP>().isNull());
+    m_d->b3 = !(resourceManager->resource(KoCanvasResource::CurrentSecondPaintOpPreset).value<KisPaintOpPresetSP>().isNull());
+    m_d->useDualBrush = m_d->b1 && m_d->b2 && m_d->b3;
+
+    if(m_d->useDualBrush) {
+        m_d->secondaryResources = new KisResourcesSnapshot(image,
+                                                           resourceManager->resource(KoCanvasResource::PreviousKritaNode).value<KisNodeWSP>(),
+                                                           resourceManager,
+                                                           bounds,
+                                                           KisNodeList(), resourceManager->resource(KoCanvasResource::CurrentSecondPaintOpPreset).value<KisPaintOpPresetSP>());
+
+        createPainters(m_d->secondStrokeInfos,
+                       startDist);
+
+        KisStrokeStrategy *secondStroke =
+            new FreehandStrokeStrategy(m_d->secondaryResources,
+                                       m_d->secondStrokeInfos,
+                                       m_d->transactionText,
+                                       FreehandStrokeStrategy::SupportsContinuedInterstrokeData |
+                                           FreehandStrokeStrategy::SupportsTimedMergeId);
+
+        m_d->secondStrokeId = m_d->strokesFacade->startStroke(secondStroke);
+    }
 
     m_d->history.clear();
     m_d->distanceHistory.clear();
@@ -735,6 +772,17 @@ void KisToolFreehandHelper::endPaint()
 
     m_d->strokesFacade->endStroke(m_d->strokeId);
     m_d->strokeId.clear();
+
+    if(m_d->useDualBrush) {
+        m_d->secondStrokeInfos.clear(); // Including this prevent it from crashing, but the second stroke still does not get drawn.
+
+        m_d->strokesFacade->addJob(m_d->secondStrokeId,
+            new KisAsynchronousStrokeUpdateHelper::UpdateData(true));
+
+        m_d->strokesFacade->endStroke(m_d->secondStrokeId);
+        m_d->secondStrokeId.clear();
+    }
+
     m_d->infoBuilder->reset();
 }
 
@@ -766,6 +814,12 @@ void KisToolFreehandHelper::cancelPaint()
     m_d->strokesFacade->cancelStroke(m_d->strokeId);
     m_d->strokeId.clear();
 
+    if(m_d->useDualBrush) {
+        m_d->secondStrokeInfos.clear(); // Including this prevent it from crashing, but the second stroke still does not get drawn.
+
+        m_d->strokesFacade->cancelStroke(m_d->secondStrokeId);
+        m_d->secondStrokeId.clear();
+    }
 }
 
 int KisToolFreehandHelper::elapsedStrokeTime() const
@@ -1018,9 +1072,14 @@ void KisToolFreehandHelper::paintLine(int strokeInfoId,
                                       const KisPaintInformation &pi2)
 {
     m_d->hasPaintAtLeastOnce = true;
+
     m_d->strokesFacade->addJob(m_d->strokeId,
                                new FreehandStrokeStrategy::Data(strokeInfoId, pi1, pi2));
 
+    if(m_d->useDualBrush) {
+        m_d->strokesFacade->addJob(m_d->secondStrokeId,
+                                   new FreehandStrokeStrategy::Data(strokeInfoId, pi1, pi2));
+    }
 }
 
 void KisToolFreehandHelper::paintBezierCurve(int strokeInfoId,

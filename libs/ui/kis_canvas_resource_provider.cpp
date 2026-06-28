@@ -203,7 +203,10 @@ void KisCanvasResourceProvider::setPaintOpPreset(const KisPaintOpPresetSP preset
     if (!preset) return;
     QVariant v;
     v.setValue(preset);
-    m_resourceManager->setResource(KoCanvasResource::CurrentPaintOpPreset, v);
+
+    KoCanvasResource::CanvasResourceId resource = m_resourceManager->resource(KoCanvasResource::EditSecondBrush).toBool() ? KoCanvasResource::CurrentSecondPaintOpPreset : KoCanvasResource::CurrentPaintOpPreset;
+
+    m_resourceManager->setResource(resource, v);
 
     Q_EMIT sigPaintOpPresetChanged(preset);
 }
@@ -275,9 +278,16 @@ void KisCanvasResourceProvider::slotSetBGColor(const KoColor& c)
 
 void KisCanvasResourceProvider::slotNodeActivated(const KisNodeSP node)
 {
+    QVariant prev = m_resourceManager->resource(KoCanvasResource::CurrentKritaNode);
+
     QVariant v;
     v.setValue(KisNodeWSP(node));
     m_resourceManager->setResource(KoCanvasResource::CurrentKritaNode, v);
+
+    if(prev.value<KisNodeWSP>() != v.value<KisNodeWSP>()) {
+        m_resourceManager->setResource(KoCanvasResource::PreviousKritaNode, prev);
+    }
+
     Q_EMIT sigNodeChanged(currentNode());
 }
 
@@ -555,6 +565,26 @@ void KisCanvasResourceProvider::setDisablePressure(bool value)
 bool KisCanvasResourceProvider::disablePressure() const
 {
     return m_resourceManager->resource(KoCanvasResource::DisablePressure).toBool();
+}
+
+void KisCanvasResourceProvider::setDisableDualBrush(bool value)
+{
+    m_resourceManager->setResource(KoCanvasResource::DisableDualBrush, value);
+}
+
+bool KisCanvasResourceProvider::disableDualBrush() const
+{
+    return m_resourceManager->resource(KoCanvasResource::DisableDualBrush).toBool();
+}
+
+void KisCanvasResourceProvider::setEditSecondBrush(bool value)
+{
+    m_resourceManager->setResource(KoCanvasResource::EditSecondBrush, value);
+}
+
+bool KisCanvasResourceProvider::editSecondBrush() const
+{
+    return m_resourceManager->resource(KoCanvasResource::EditSecondBrush).toBool();
 }
 
 void KisCanvasResourceProvider::setTextPropertyData(KoSvgTextPropertyData data)
