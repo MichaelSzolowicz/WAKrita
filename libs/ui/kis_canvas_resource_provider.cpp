@@ -211,6 +211,12 @@ void KisCanvasResourceProvider::setPaintOpPreset(const KisPaintOpPresetSP preset
     Q_EMIT sigPaintOpPresetChanged(preset);
 }
 
+KisPaintOpPresetSP KisCanvasResourceProvider::secondaryPreset() const
+{
+    KisPaintOpPresetSP preset = m_resourceManager->resource(KoCanvasResource::CurrentSecondPaintOpPreset).value<KisPaintOpPresetSP>();
+    return preset;
+}
+
 KisPaintOpPresetSP KisCanvasResourceProvider::previousPreset() const
 {
     KisPaintOpPresetSP preset = m_resourceManager->resource(KoCanvasResource::PreviousPaintOpPreset).value<KisPaintOpPresetSP>();

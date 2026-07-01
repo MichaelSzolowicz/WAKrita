@@ -757,6 +757,10 @@ void KisPaintopBox::slotUpdateOptionsWidgetPopup()
 {
     KisPaintOpPresetSP preset = m_resourceProvider->currentPreset();
 
+    if(m_resourceProvider->editSecondBrush()) {
+        preset = m_resourceProvider->secondaryPreset();
+    }
+
     // This happens when we have a new brush engine for which no default preset exists yet.
     if (!preset) return;
 
