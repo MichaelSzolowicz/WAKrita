@@ -355,7 +355,7 @@ void KisToolFreehandHelper::initPaintImpl(qreal startAngle,
     // Begin dual brush impl
 
     // Multiple bools for testing purposes only, to make values easy to see in debugger.
-    m_d->b1 = !resourceManager->resource(KoCanvasResource::DisableDualBrush).toBool();
+    m_d->b1 = resourceManager->resource(KoCanvasResource::DisableDualBrush).toBool();
     m_d->b2 = !(resourceManager->resource(KoCanvasResource::PreviousKritaNode).value<KisNodeWSP>().isNull());
     m_d->b3 = !(resourceManager->resource(KoCanvasResource::CurrentSecondPaintOpPreset).value<KisPaintOpPresetSP>().isNull());
     m_d->useDualBrush = m_d->b1 && m_d->b2 && m_d->b3;
