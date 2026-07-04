@@ -136,8 +136,8 @@ public:
     void setDisablePressure(bool value);
     bool disablePressure() const;
 
-    void setDisableDualBrush(bool value);
-    bool disableDualBrush() const;
+    void setEnableDualBrush(bool value);
+    bool enableDualBrush() const;
 
     void setEditSecondBrush(bool value);
     bool editSecondBrush() const;

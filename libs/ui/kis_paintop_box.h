@@ -157,7 +157,7 @@ private Q_SLOTS:
     void slotUnsetEraseMode();
     void slotToggleAlphaLockMode(bool);
     void slotDisablePressureMode(bool);
-    void slotDisableDualBrush(bool);
+    void slotEnableDualBrush(bool);
     void slotEditSecondBrush(bool);
 
     void slotReloadPreset();
@@ -212,7 +212,7 @@ private:
     KisAction*                          m_brushSelectPresetAction {0};
     KisAction*                          m_reloadAction {0};
     KisAction*                          m_disablePressureAction {0};
-    KisAction*                          m_disableDualBrushAction {0};
+    KisAction*                          m_enableDualBrushAction {0};
     KisAction*                          m_editSecondBrushAction {0};
 
     QString    m_currCompositeOpID;

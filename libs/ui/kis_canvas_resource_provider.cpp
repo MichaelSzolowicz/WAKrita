@@ -573,14 +573,14 @@ bool KisCanvasResourceProvider::disablePressure() const
     return m_resourceManager->resource(KoCanvasResource::DisablePressure).toBool();
 }
 
-void KisCanvasResourceProvider::setDisableDualBrush(bool value)
+void KisCanvasResourceProvider::setEnableDualBrush(bool value)
 {
-    m_resourceManager->setResource(KoCanvasResource::DisableDualBrush, value);
+    m_resourceManager->setResource(KoCanvasResource::EnableDualBrush, value);
 }
 
-bool KisCanvasResourceProvider::disableDualBrush() const
+bool KisCanvasResourceProvider::enableDualBrush() const
 {
-    return m_resourceManager->resource(KoCanvasResource::DisableDualBrush).toBool();
+    return m_resourceManager->resource(KoCanvasResource::EnableDualBrush).toBool();
 }
 
 void KisCanvasResourceProvider::setEditSecondBrush(bool value)
