@@ -526,8 +526,8 @@ KisPaintopBox::KisPaintopBox(KisViewManager *viewManager, QWidget *parent, const
     connect(m_disablePressureAction  , SIGNAL(toggled(bool))                    , SLOT(slotDisablePressureMode(bool)));
     m_disablePressureAction->setChecked(true);
 
-    m_disableDualBrushAction = m_viewManager->actionManager()->createAction("disable_dualbrush");
-    connect(m_disableDualBrushAction  , SIGNAL(toggled(bool))                    , SLOT(slotDisableDualBrush(bool)));
+    m_enableDualBrushAction = m_viewManager->actionManager()->createAction("disable_dualbrush");
+    connect(m_enableDualBrushAction  , SIGNAL(toggled(bool))                    , SLOT(slotEnableDualBrush(bool)));
 
     m_editSecondBrushAction = m_viewManager->actionManager()->createAction("edit_second_brush");
     connect(m_editSecondBrushAction   , SIGNAL(toggled(bool))                     , SLOT(slotEditSecondBrush(bool)));
@@ -756,6 +756,10 @@ void KisPaintopBox::setCurrentPaintop(KisPaintOpPresetSP preset)
 void KisPaintopBox::slotUpdateOptionsWidgetPopup()
 {
     KisPaintOpPresetSP preset = m_resourceProvider->currentPreset();
+
+    if(m_resourceProvider->editSecondBrush()) {
+        preset = m_resourceProvider->secondaryPreset();
+    }
 
     // This happens when we have a new brush engine for which no default preset exists yet.
     if (!preset) return;
@@ -1409,9 +1413,9 @@ void KisPaintopBox::slotDisablePressureMode(bool checked)
     m_resourceProvider->setDisablePressure(checked);
 }
 
-void KisPaintopBox::slotDisableDualBrush(bool checked)
+void KisPaintopBox::slotEnableDualBrush(bool checked)
 {
-    m_resourceProvider->setDisableDualBrush(checked);
+    m_resourceProvider->setEnableDualBrush(checked);
 }
 
 void KisPaintopBox::slotEditSecondBrush(bool checked)
@@ -1436,6 +1440,12 @@ void KisPaintopBox::slotGuiChangedCurrentPreset() // Called only when UI is chan
 {
     KisPaintOpPresetSP preset = m_resourceProvider->currentPreset();
 
+    // Hasty fix for crash that occurs when cacheing presets while editing second brush.
+    // Should rethink how CanvasResourceId::CurrentPaintOpPreset is handled in general.
+    if(m_resourceProvider->editSecondBrush()) {
+        preset = m_resourceProvider->secondaryPreset();
+    }
+
     {
         /**
          * Here we postpone all the settings updates events until the entire writing
@@ -1455,7 +1465,7 @@ void KisPaintopBox::slotGuiChangedCurrentPreset() // Called only when UI is chan
     }
 
     // we should also update the preset strip to update the status of the "dirty" mark
-    m_presetsEditor->resourceSelected(m_resourceProvider->currentPreset());
+    m_presetsEditor->resourceSelected(preset);
 
     // TODO!!!!!!!!
     //m_presetsPopup->updateViewSettings();

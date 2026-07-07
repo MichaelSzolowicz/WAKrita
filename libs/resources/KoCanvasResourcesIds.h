@@ -58,7 +58,7 @@ enum CanvasResourceId {
     HdrGamma,
     GlobalAlphaLock,
     DisablePressure,
-    DisableDualBrush,
+    EnableDualBrush,
     EditSecondBrush,
     PreviousPaintOpPreset,
     EffectiveZoom, ///<-Used only by painting tools for non-displaying purposes

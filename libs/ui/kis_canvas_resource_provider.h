@@ -83,6 +83,8 @@ public:
     KisPaintOpPresetSP currentPreset() const;
     void setPaintOpPreset(const KisPaintOpPresetSP preset);
 
+    KisPaintOpPresetSP secondaryPreset() const;
+
     KisPaintOpPresetSP previousPreset() const;
     void setPreviousPaintOpPreset(const KisPaintOpPresetSP preset);
 
@@ -134,8 +136,8 @@ public:
     void setDisablePressure(bool value);
     bool disablePressure() const;
 
-    void setDisableDualBrush(bool value);
-    bool disableDualBrush() const;
+    void setEnableDualBrush(bool value);
+    bool enableDualBrush() const;
 
     void setEditSecondBrush(bool value);
     bool editSecondBrush() const;
