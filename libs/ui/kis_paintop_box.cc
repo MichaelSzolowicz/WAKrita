@@ -1440,6 +1440,12 @@ void KisPaintopBox::slotGuiChangedCurrentPreset() // Called only when UI is chan
 {
     KisPaintOpPresetSP preset = m_resourceProvider->currentPreset();
 
+    // Hasty fix for crash that occurs when cacheing presets while editing second brush.
+    // Should rethink how CanvasResourceId::CurrentPaintOpPreset is handled in general.
+    if(m_resourceProvider->editSecondBrush()) {
+        preset = m_resourceProvider->secondaryPreset();
+    }
+
     {
         /**
          * Here we postpone all the settings updates events until the entire writing
@@ -1459,7 +1465,7 @@ void KisPaintopBox::slotGuiChangedCurrentPreset() // Called only when UI is chan
     }
 
     // we should also update the preset strip to update the status of the "dirty" mark
-    m_presetsEditor->resourceSelected(m_resourceProvider->currentPreset());
+    m_presetsEditor->resourceSelected(preset);
 
     // TODO!!!!!!!!
     //m_presetsPopup->updateViewSettings();
