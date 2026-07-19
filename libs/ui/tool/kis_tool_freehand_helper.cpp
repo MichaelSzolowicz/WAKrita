@@ -1118,6 +1118,12 @@ void KisToolFreehandHelper::paintBezierCurve(int strokeInfoId,
                                new FreehandStrokeStrategy::Data(strokeInfoId,
                                                                 pi1, control1, control2, pi2));
 
+    if(m_d->useDualBrush) {
+        m_d->strokesFacade->addJob(m_d->secondStrokeId,
+                                   new FreehandStrokeStrategy::Data(strokeInfoId,
+                                                                    pi1, control1, control2, pi2));
+    }
+
 }
 
 void KisToolFreehandHelper::createPainters(QVector<KisFreehandStrokeInfo*> &strokeInfos,
