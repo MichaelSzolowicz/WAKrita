@@ -11,6 +11,7 @@
 #include "kis_fixed_paint_device.h"
 #include "kis_paint_device.h"
 #include "KisColorSmudgeSampleUtils.h"
+#include <KoColorSpaceMaths.h>
 
 /**********************************************************************************/
 /*                 DabColoringStrategyMask                                        */
@@ -77,6 +78,24 @@ void KisColorSmudgeStrategyBase::DabColoringStrategyStamp::blendInColorRate(cons
 
     // TODO: check correctness for composition source device (transparency masks)
     KIS_ASSERT_RECOVER_RETURN(*dstDevice->colorSpace() == *m_origDab->colorSpace());
+
+    // begin test code
+    quint8* src = m_origDab->data();
+    for (qint32 i=0; i<dstRect.height()*dstRect.width(); ++i) {
+        QColor c;
+        m_origDab->colorSpace()->toQColor(src, &c);
+
+        qint8 red = c.red();
+        red = 0;
+        c.setRed(red);
+        c.setBlue(0);
+        c.setGreen(0);
+
+        m_origDab->colorSpace()->fromQColor(c, src);
+
+        src += m_origDab->pixelSize();
+    }
+    // end test code
 
     colorRateOp->composite(dstDevice->data(), dstRect.width() * dstDevice->pixelSize(),
                            m_origDab->data(), dstRect.width() * m_origDab->pixelSize(),
