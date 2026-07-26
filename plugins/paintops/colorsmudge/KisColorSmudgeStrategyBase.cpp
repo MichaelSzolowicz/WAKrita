@@ -87,9 +87,9 @@ void KisColorSmudgeStrategyBase::DabColoringStrategyStamp::blendInColorRate(cons
 
         qint8 red = c.red();
         red = 0;
-        c.setRed(red);
-        c.setBlue(0);
+        //c.setRed(red);
         c.setGreen(0);
+        //c.setBlue(0);
 
         m_origDab->colorSpace()->fromQColor(c, src);
 

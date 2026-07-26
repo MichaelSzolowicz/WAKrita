@@ -31,6 +31,13 @@ set(kritacolorsmudgepaintop_SOURCES
 
 kis_add_library(kritacolorsmudgepaintop MODULE ${kritacolorsmudgepaintop_SOURCES})
 
+target_sources(kritacolorsmudgepaintop
+  PRIVATE
+
+    KisChannelOptionData.h KisChannelOptionData.cpp
+    KisChannelOption.h
+)
+
 target_link_libraries(kritacolorsmudgepaintop kritalibpaintop)
 
 install(TARGETS kritacolorsmudgepaintop DESTINATION ${KRITA_PLUGIN_INSTALL_DIR})

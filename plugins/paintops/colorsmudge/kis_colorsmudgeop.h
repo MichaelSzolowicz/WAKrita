@@ -29,6 +29,8 @@
 #include <KisSmudgeRadiusOption.h>
 #include <KisSmudgeOverlayModeOptionData.h>
 
+#include <KisChannelOption.h>
+
 class QPointF;
 
 class KisBrushBasedPaintOpSettings;

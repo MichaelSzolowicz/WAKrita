@@ -31,6 +31,8 @@ KisColorSmudgeOpSettings::~KisColorSmudgeOpSettings()
 #include "KisCurveOptionDataUniformProperty.h"
 #include "KisSmudgeRadiusOptionData.h"
 
+#include "KisChannelOptionData.h"
+
 QList<KisUniformPaintOpPropertySP> KisColorSmudgeOpSettings::uniformProperties(KisPaintOpSettingsSP settings, QPointer<KisPaintOpPresetUpdateProxy> updateProxy)
 {
     QList<KisUniformPaintOpPropertySP> props =
@@ -86,6 +88,13 @@ QList<KisUniformPaintOpPropertySP> KisColorSmudgeOpSettings::uniformProperties(K
             QObject::connect(updateProxy, SIGNAL(sigSettingsChanged()), prop, SLOT(requestReadValue()));
             prop->requestReadValue();
             props << toQShared(prop);
+        }
+        {
+            KisCurveOptionDataUniformProperty *prop =
+                new KisCurveOptionDataUniformProperty(
+                    KisChannelOptionData(),
+                    "channel_option",
+                    settings, 0);
         }
 
         {
