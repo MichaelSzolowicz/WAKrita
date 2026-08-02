@@ -33,7 +33,8 @@ public:
                                     qreal smudgeRateValue,
                                     qreal maxPossibleSmudgeRateValue,
                                     qreal lightnessStrengthValue,
-                                    qreal smudgeRadiusValue) = 0;
+                                    qreal smudgeRadiusValue,
+                                    qreal blueContrastValue = 0) = 0;
 
     virtual const KoColorSpace* preciseColorSpace() const = 0;
 

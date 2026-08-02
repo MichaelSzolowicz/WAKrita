@@ -48,7 +48,7 @@ void KisColorSmudgeStrategyBase::DabColoringStrategyMask::blendInColorRate(const
                                                                            const KoCompositeOp *colorRateOp,
                                                                            qreal colorRateOpacity,
                                                                            KisFixedPaintDeviceSP dstDevice,
-                                                                           const QRect &dstRect) const
+                                                                           const QRect &dstRect, qreal blueContrastValue) const
 {
     KIS_SAFE_ASSERT_RECOVER_RETURN(*paintColor.colorSpace() == *colorRateOp->colorSpace());
 
@@ -72,7 +72,7 @@ void KisColorSmudgeStrategyBase::DabColoringStrategyStamp::blendInColorRate(cons
                                                                             const KoCompositeOp *colorRateOp,
                                                                             qreal colorRateOpacity,
                                                                             KisFixedPaintDeviceSP dstDevice,
-                                                                            const QRect &dstRect) const
+                                                                            const QRect &dstRect, qreal blueContrastValue) const
 {
     Q_UNUSED(paintColor);
 
@@ -85,11 +85,7 @@ void KisColorSmudgeStrategyBase::DabColoringStrategyStamp::blendInColorRate(cons
         QColor c;
         m_origDab->colorSpace()->toQColor(src, &c);
 
-        qint8 red = c.red();
-        red = 0;
-        //c.setRed(red);
-        c.setGreen(0);
-        //c.setBlue(0);
+        c.setBlueF(blueContrastValue);
 
         m_origDab->colorSpace()->fromQColor(c, src);
 
@@ -204,7 +200,7 @@ KisColorSmudgeStrategyBase::blendBrush(const QVector<KisPainter *> dstPainters, 
                                        KisFixedPaintDeviceSP maskDab, bool preserveMaskDab, const QRect &srcRect,
                                        const QRect &dstRect, const KoColor &currentPaintColor, qreal opacity,
                                        qreal smudgeRateValue, qreal maxPossibleSmudgeRateValue, qreal colorRateValue,
-                                       qreal smudgeRadiusValue)
+                                       qreal smudgeRadiusValue, qreal blueContrastValue)
 {
     const qreal colorRateOpacity = this->colorRateOpacity(opacity, smudgeRateValue, colorRateValue, maxPossibleSmudgeRateValue);
 
@@ -261,7 +257,7 @@ KisColorSmudgeStrategyBase::blendBrush(const QVector<KisPainter *> dstPainters, 
                     currentPaintColor.convertedTo(m_preparedDullingColor.colorSpace()),
                     m_colorRateOp,
                     colorRateOpacity,
-                    m_blendDevice, dstRect);
+                    m_blendDevice, dstRect, blueContrastValue);
         }
     }
 

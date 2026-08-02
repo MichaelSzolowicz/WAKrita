@@ -138,7 +138,7 @@ QVector<QRect>
 KisColorSmudgeStrategyLightness::paintDab(const QRect &srcRect, const QRect &dstRect, const KoColor &currentPaintColor,
                                           qreal opacity, qreal colorRateValue, qreal smudgeRateValue,
                                           qreal maxPossibleSmudgeRateValue, qreal paintThicknessValue,
-                                          qreal smudgeRadiusValue)
+                                          qreal smudgeRadiusValue, qreal blueContrastValue)
 {
     const int numPixels = dstRect.width() * dstRect.height();
 
@@ -159,7 +159,8 @@ KisColorSmudgeStrategyLightness::paintDab(const QRect &srcRect, const QRect &dst
         smudgeRateValue,
         maxPossibleSmudgeRateValue,
         colorRateValue,
-        smudgeRadiusValue);
+        smudgeRadiusValue,
+        blueContrastValue);
 
 
     const qreal overlaySmearRate = smudgeRateValue - 0.01; //adjust so minimum value is 0 instead of 1%

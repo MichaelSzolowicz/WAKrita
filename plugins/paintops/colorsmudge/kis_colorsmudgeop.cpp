@@ -60,6 +60,7 @@ KisColorSmudgeOp::KisColorSmudgeOp(const KisPaintOpSettingsSP settings, KisPaint
     , m_smudgeRateOption(settings.data())
     , m_colorRateOption(settings.data())
     , m_smudgeRadiusOption(settings.data())
+    , m_blueContrastOption(settings.data())
 {
     Q_UNUSED(node);
     Q_ASSERT(painter);
@@ -213,6 +214,8 @@ KisSpacingInformation KisColorSmudgeOp::paintAt(const KisPaintInformation& info)
         m_hsvTransform->transform(paintColor.data(), paintColor.data(), 1);
     }
 
+    const qreal blueChannelContrast = m_blueContrastOption.isChecked() ? m_blueContrastOption.computeSizeLikeValue(info) : 0.0;
+
     const QVector<QRect> dirtyRects =
             m_strategy->paintDab(srcDabRect, m_dstDabRect,
                                  paintColor,
@@ -220,7 +223,8 @@ KisSpacingInformation KisColorSmudgeOp::paintAt(const KisPaintInformation& info)
                                  smudgeRate,
                                  maxSmudgeRate,
                                  paintThickness,
-                                 smudgeRadiusPortion);
+                                 smudgeRadiusPortion,
+                                 blueChannelContrast);
 
     painter()->addDirtyRects(dirtyRects);
 
