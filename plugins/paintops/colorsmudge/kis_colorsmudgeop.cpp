@@ -214,7 +214,7 @@ KisSpacingInformation KisColorSmudgeOp::paintAt(const KisPaintInformation& info)
         m_hsvTransform->transform(paintColor.data(), paintColor.data(), 1);
     }
 
-    const qreal blueChannelContrast = m_blueContrastOption.isChecked() ? m_blueContrastOption.computeSizeLikeValue(info) : 0.0;
+    const qreal blueChannelContrast = m_blueContrastOption.isChecked() ? m_blueContrastOption.computeSizeLikeValue(info) : 1.0;
 
     const QVector<QRect> dirtyRects =
             m_strategy->paintDab(srcDabRect, m_dstDabRect,

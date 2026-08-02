@@ -80,21 +80,23 @@ void KisColorSmudgeStrategyBase::DabColoringStrategyStamp::blendInColorRate(cons
     KIS_ASSERT_RECOVER_RETURN(*dstDevice->colorSpace() == *m_origDab->colorSpace());
 
     // begin test code
-    quint8* src = m_origDab->data();
+    KisFixedPaintDeviceSP origDabCpy = new KisFixedPaintDevice(*m_origDab.data());
+    quint8* src = origDabCpy->data();
+    QColor c;
     for (qint32 i=0; i<dstRect.height()*dstRect.width(); ++i) {
-        QColor c;
-        m_origDab->colorSpace()->toQColor(src, &c);
 
-        c.setBlueF(blueContrastValue);
+        origDabCpy->colorSpace()->toQColor(src, &c);
 
-        m_origDab->colorSpace()->fromQColor(c, src);
+        c.setGreen(c.green() * blueContrastValue);
 
-        src += m_origDab->pixelSize();
+        origDabCpy->colorSpace()->fromQColor(c, src);
+
+        src += origDabCpy->pixelSize();
     }
     // end test code
 
     colorRateOp->composite(dstDevice->data(), dstRect.width() * dstDevice->pixelSize(),
-                           m_origDab->data(), dstRect.width() * m_origDab->pixelSize(),
+                           origDabCpy->data(), dstRect.width() * origDabCpy->pixelSize(),
                            0, 0,
                            dstRect.height(), dstRect.width(),
                            colorRateOpacity);
