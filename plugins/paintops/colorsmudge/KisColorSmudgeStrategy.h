@@ -10,6 +10,35 @@
 #include <KisOptimizedByteArray.h>
 #include <kis_dab_cache.h>
 
+struct KisColorSmudgeStrategyOptions
+{
+    qreal opacity;
+    qreal colorRateValue;
+    qreal smudgeRateValue;
+    qreal maxPossibleSmudgeRateValue;
+    qreal lightnessStrengthValue;
+    qreal smudgeRadiusValue;
+    qreal waThicknessValue;
+
+    KisColorSmudgeStrategyOptions(qreal opacity,
+                                  qreal colorRateValue,
+                                  qreal smudgeRateValue,
+                                  qreal maxPossibleSmudgeRateValue,
+                                  qreal lightnessStrengthValue,
+                                  qreal smudgeRadiusValue,
+                                  qreal waThicknessValue) :
+        opacity(opacity)
+        ,   colorRateValue(colorRateValue)
+        ,   smudgeRateValue(smudgeRateValue)
+        ,   maxPossibleSmudgeRateValue(maxPossibleSmudgeRateValue)
+        ,   lightnessStrengthValue(lightnessStrengthValue)
+        ,   smudgeRadiusValue(smudgeRadiusValue)
+        ,   waThicknessValue(waThicknessValue)
+    {
+
+    }
+};
+
 class KisColorSmudgeStrategy
 {
 public:
@@ -28,13 +57,7 @@ public:
 
     virtual QVector<QRect> paintDab(const QRect &srcRect, const QRect &dstRect,
                                     const KoColor &currentPaintColor,
-                                    qreal opacity,
-                                    qreal colorRateValue,
-                                    qreal smudgeRateValue,
-                                    qreal maxPossibleSmudgeRateValue,
-                                    qreal lightnessStrengthValue,
-                                    qreal smudgeRadiusValue,
-                                    qreal blueContrastValue = 0) = 0;
+                                    KisColorSmudgeStrategyOptions options) = 0;
 
     virtual const KoColorSpace* preciseColorSpace() const = 0;
 

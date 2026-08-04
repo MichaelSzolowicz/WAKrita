@@ -105,8 +105,7 @@ public:
 
     void blendBrush(const QVector<KisPainter *> dstPainters, KisColorSmudgeSourceSP srcSampleDevice,
                     KisFixedPaintDeviceSP maskDab, bool preserveMaskDab, const QRect &srcRect, const QRect &dstRect,
-                    const KoColor &currentPaintColor, qreal opacity, qreal smudgeRateValue,
-                    qreal maxPossibleSmudgeRateValue, qreal colorRateValue, qreal smudgeRadiusValue, qreal blueContrastValue);
+                    const KoColor &currentPaintColor, KisColorSmudgeStrategyOptions options);
 
     void blendInBackgroundWithSmearing(KisFixedPaintDeviceSP dst, KisColorSmudgeSourceSP src, const QRect &srcRect,
                                        const QRect &dstRect, const qreal smudgeRateOpacity);
