@@ -29,7 +29,7 @@
 #include <KisSmudgeRadiusOption.h>
 #include <KisSmudgeOverlayModeOptionData.h>
 
-#include <KisChannelOption.h>
+#include <KisWaPaintOption.h>
 
 class QPointF;
 
@@ -72,7 +72,7 @@ private:
     KisColorRateOption2 m_colorRateOption;
     KisSmudgeRadiusOption2 m_smudgeRadiusOption;
 
-    KisChannelOption m_blueContrastOption;
+    KisWaPaintOption m_waThicknessOption;
 
     QList<KisHSVOption*> m_hsvOptions;
     KisAirbrushOptionData m_airbrushData;

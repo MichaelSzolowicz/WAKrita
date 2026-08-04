@@ -2,8 +2,8 @@
 #define KISCHANNELOPTION_H
 
 #include <KisStandardOptions.h>
-#include <KisChannelOptionData.h>
+#include <KisWaPaintOptionData.h>
 
-using KisChannelOption = KisStandardOptionNoApply<KisChannelOptionData>;
+using KisWaPaintOption = KisStandardOptionNoApply<KisWaPaintOptionData>;
 
 #endif // KISCHANNELOPTION_H
