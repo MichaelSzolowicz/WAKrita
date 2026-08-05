@@ -27,9 +27,15 @@ set(kritacolorsmudgepaintop_SOURCES
     KisColorSmudgeStrategyWithOverlay.cpp
     KisColorSmudgeStrategyMask.cpp
     KisColorSmudgeStrategyStamp.cpp
-    KisColorSmudgeStrategyMaskLegacy.cpp)
+    KisColorSmudgeStrategyMaskLegacy.cpp
+    KisWaPaintOptionData.cpp)
 
 kis_add_library(kritacolorsmudgepaintop MODULE ${kritacolorsmudgepaintop_SOURCES})
+
+target_sources(kritacolorsmudgepaintop
+  PRIVATE
+
+)
 
 target_link_libraries(kritacolorsmudgepaintop kritalibpaintop)
 

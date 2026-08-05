@@ -29,6 +29,8 @@
 #include <KisSmudgeRadiusOption.h>
 #include <KisSmudgeOverlayModeOptionData.h>
 
+#include <KisWaPaintOption.h>
+
 class QPointF;
 
 class KisBrushBasedPaintOpSettings;
@@ -69,6 +71,8 @@ private:
     KisSmudgeLengthOption m_smudgeRateOption;
     KisColorRateOption2 m_colorRateOption;
     KisSmudgeRadiusOption2 m_smudgeRadiusOption;
+
+    KisWaPaintOption m_waThicknessOption;
 
     QList<KisHSVOption*> m_hsvOptions;
     KisAirbrushOptionData m_airbrushData;

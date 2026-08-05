@@ -11,6 +11,7 @@
 #include "kis_fixed_paint_device.h"
 #include "kis_paint_device.h"
 #include "KisColorSmudgeSampleUtils.h"
+#include <KoColorSpaceMaths.h>
 
 /**********************************************************************************/
 /*                 DabColoringStrategyMask                                        */
@@ -47,8 +48,10 @@ void KisColorSmudgeStrategyBase::DabColoringStrategyMask::blendInColorRate(const
                                                                            const KoCompositeOp *colorRateOp,
                                                                            qreal colorRateOpacity,
                                                                            KisFixedPaintDeviceSP dstDevice,
-                                                                           const QRect &dstRect) const
+                                                                           const QRect &dstRect, qreal waThicknessValue) const
 {
+    Q_UNUSED(waThicknessValue);
+
     KIS_SAFE_ASSERT_RECOVER_RETURN(*paintColor.colorSpace() == *colorRateOp->colorSpace());
 
     colorRateOp->composite(dstDevice->data(), dstRect.width() * dstDevice->pixelSize(),
@@ -71,15 +74,31 @@ void KisColorSmudgeStrategyBase::DabColoringStrategyStamp::blendInColorRate(cons
                                                                             const KoCompositeOp *colorRateOp,
                                                                             qreal colorRateOpacity,
                                                                             KisFixedPaintDeviceSP dstDevice,
-                                                                            const QRect &dstRect) const
+                                                                            const QRect &dstRect, qreal waThicknessValue) const
 {
     Q_UNUSED(paintColor);
 
     // TODO: check correctness for composition source device (transparency masks)
     KIS_ASSERT_RECOVER_RETURN(*dstDevice->colorSpace() == *m_origDab->colorSpace());
 
+    // begin test code
+    KisFixedPaintDeviceSP origDabCpy = new KisFixedPaintDevice(*m_origDab.data());
+    quint8* src = origDabCpy->data();
+    QColor c;
+    for (qint32 i=0; i<dstRect.height()*dstRect.width(); ++i) {
+
+        origDabCpy->colorSpace()->toQColor(src, &c);
+
+        c.setGreen(c.green() * waThicknessValue);
+
+        origDabCpy->colorSpace()->fromQColor(c, src);
+
+        src += origDabCpy->pixelSize();
+    }
+    // end test code
+
     colorRateOp->composite(dstDevice->data(), dstRect.width() * dstDevice->pixelSize(),
-                           m_origDab->data(), dstRect.width() * m_origDab->pixelSize(),
+                           origDabCpy->data(), dstRect.width() * origDabCpy->pixelSize(),
                            0, 0,
                            dstRect.height(), dstRect.width(),
                            colorRateOpacity);
@@ -183,15 +202,13 @@ void KisColorSmudgeStrategyBase::sampleDullingColor(const QRect &srcRect, qreal 
 void
 KisColorSmudgeStrategyBase::blendBrush(const QVector<KisPainter *> dstPainters, KisColorSmudgeSourceSP srcSampleDevice,
                                        KisFixedPaintDeviceSP maskDab, bool preserveMaskDab, const QRect &srcRect,
-                                       const QRect &dstRect, const KoColor &currentPaintColor, qreal opacity,
-                                       qreal smudgeRateValue, qreal maxPossibleSmudgeRateValue, qreal colorRateValue,
-                                       qreal smudgeRadiusValue)
+                                       const QRect &dstRect, const KoColor &currentPaintColor, KisColorSmudgeStrategyOptions options)
 {
-    const qreal colorRateOpacity = this->colorRateOpacity(opacity, smudgeRateValue, colorRateValue, maxPossibleSmudgeRateValue);
+    const qreal colorRateOpacity = this->colorRateOpacity(options.opacity, options.smudgeRateValue, options.colorRateValue, options.maxPossibleSmudgeRateValue);
 
     if (m_useDullingMode) {
         this->sampleDullingColor(srcRect,
-                                 smudgeRadiusValue,
+                                 options.smudgeRadiusValue,
                                  srcSampleDevice, m_blendDevice,
                                  maskDab, &m_preparedDullingColor);
 
@@ -205,7 +222,7 @@ KisColorSmudgeStrategyBase::blendBrush(const QVector<KisPainter *> dstPainters, 
 
     DabColoringStrategy &coloringStrategy = this->coloringStrategy();
 
-    const qreal dullingRateOpacity = this->dullingRateOpacity(opacity, smudgeRateValue);
+    const qreal dullingRateOpacity = this->dullingRateOpacity(options.opacity, options.smudgeRateValue);
 
     if (colorRateOpacity > 0 &&
         m_useDullingMode &&
@@ -228,7 +245,7 @@ KisColorSmudgeStrategyBase::blendBrush(const QVector<KisPainter *> dstPainters, 
 
     } else {
         if (!m_useDullingMode) {
-            const qreal smudgeRateOpacity = this->smearRateOpacity(opacity, smudgeRateValue);
+            const qreal smudgeRateOpacity = this->smearRateOpacity(options.opacity, options.smudgeRateValue);
             blendInBackgroundWithSmearing(m_blendDevice, srcSampleDevice,
                                           srcRect, dstRect, smudgeRateOpacity);
         } else {
@@ -242,14 +259,14 @@ KisColorSmudgeStrategyBase::blendBrush(const QVector<KisPainter *> dstPainters, 
                     currentPaintColor.convertedTo(m_preparedDullingColor.colorSpace()),
                     m_colorRateOp,
                     colorRateOpacity,
-                    m_blendDevice, dstRect);
+                    m_blendDevice, dstRect, options.waThicknessValue);
         }
     }
 
     const bool preserveDab = preserveMaskDab && dstPainters.size() > 1;
 
     Q_FOREACH (KisPainter *dstPainter, dstPainters) {
-        dstPainter->setOpacityF(finalPainterOpacity(opacity, smudgeRateValue));
+        dstPainter->setOpacityF(finalPainterOpacity(options.opacity, options.smudgeRateValue));
 
         dstPainter->bltFixedWithFixedSelection(dstRect.x(), dstRect.y(),
                                                m_blendDevice, maskDab,

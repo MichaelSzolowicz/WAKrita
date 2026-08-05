@@ -136,9 +136,7 @@ void KisColorSmudgeStrategyLightness::updateMask(KisDabCache *dabCache, const Ki
 
 QVector<QRect>
 KisColorSmudgeStrategyLightness::paintDab(const QRect &srcRect, const QRect &dstRect, const KoColor &currentPaintColor,
-                                          qreal opacity, qreal colorRateValue, qreal smudgeRateValue,
-                                          qreal maxPossibleSmudgeRateValue, qreal paintThicknessValue,
-                                          qreal smudgeRadiusValue)
+                                          KisColorSmudgeStrategyOptions options)
 {
     const int numPixels = dstRect.width() * dstRect.height();
 
@@ -155,18 +153,14 @@ KisColorSmudgeStrategyLightness::paintDab(const QRect &srcRect, const QRect &dst
         m_maskDab, m_shouldPreserveOriginalDab,
         srcRect, dstRect,
         currentPaintColor,
-        opacity,
-        smudgeRateValue,
-        maxPossibleSmudgeRateValue,
-        colorRateValue,
-        smudgeRadiusValue);
+        options);
 
 
-    const qreal overlaySmearRate = smudgeRateValue - 0.01; //adjust so minimum value is 0 instead of 1%
+    const qreal overlaySmearRate = options.smudgeRateValue - 0.01; //adjust so minimum value is 0 instead of 1%
     const qreal overlayAdjustment =
         (m_thicknessMode == KisPaintThicknessOptionData::ThicknessMode::OVERWRITE) ?
-        1.0 : KisAlgebra2D::lerp(overlaySmearRate, 1.0, paintThicknessValue);
-    const qreal brushHeightmapOpacity = opacity * overlayAdjustment;
+        1.0 : KisAlgebra2D::lerp(overlaySmearRate, 1.0, options.lightnessStrengthValue);
+    const qreal brushHeightmapOpacity = options.opacity * overlayAdjustment;
     m_heightmapPainter.setOpacityF(brushHeightmapOpacity);
     m_heightmapPainter.bltFixed(dstRect.topLeft(), m_origDab, m_origDab->bounds());
     m_heightmapPainter.renderMirrorMaskSafe(dstRect, m_origDab, m_shouldPreserveOriginalDab);

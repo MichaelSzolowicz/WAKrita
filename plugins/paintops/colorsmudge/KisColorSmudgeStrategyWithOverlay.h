@@ -26,9 +26,7 @@ public:
 
     QVector<KisPainter*> finalPainters();
 
-    QVector<QRect> paintDab(const QRect &srcRect, const QRect &dstRect, const KoColor &currentPaintColor, qreal opacity,
-                            qreal colorRateValue, qreal smudgeRateValue, qreal maxPossibleSmudgeRateValue,
-                            qreal lightnessStrengthValue, qreal smudgeRadiusValue) override;
+    QVector<QRect> paintDab(const QRect &srcRect, const QRect &dstRect, const KoColor &currentPaintColor, KisColorSmudgeStrategyOptions options) override;
 
 protected:
     KisFixedPaintDeviceSP m_maskDab;

@@ -29,6 +29,8 @@
 #include <KisSmudgeRadiusOptionData.h>
 #include <KisZug.h>
 
+#include <KisWaPaintOptionData.h>
+
 
 struct KisColorSmudgeOpSettingsWidget::Private
 {
@@ -105,6 +107,14 @@ KisColorSmudgeOpSettingsWidget::KisColorSmudgeOpSettingsWidget(QWidget* parent, 
 
     addPaintOpOption(kpowu::createOptionWidget<KisAirbrushOptionWidget>());
     addPaintOpOption(kpowu::createRateOptionWidget());
+
+    KisCurveOptionWidget *waThicknessWidget =
+        kpowu::createCurveOptionWidget(KisWaPaintOptionData(),
+                                       KisPaintOpOption::COLOR,
+                                       lager::make_constant(true),
+                                       rangeReader);
+
+    addPaintOpOption(waThicknessWidget);
 
     addPaintOpOption(kpowu::createOptionWidget<KisTextureOptionWidget>(KisTextureOptionData(), resourcesInterface));
     addPaintOpOption(kpowu::createCurveOptionWidget(KisStrengthOptionData(), KisPaintOpOption::COLOR, i18n("Weak"), i18n("Strong")));
