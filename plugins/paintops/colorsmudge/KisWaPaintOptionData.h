@@ -8,4 +8,9 @@ struct KisWaThicknessOptionData : KisCurveOptionData
     KisWaThicknessOptionData();
 };
 
+struct KisWaPressureOptionData : KisCurveOptionData
+{
+    KisWaPressureOptionData();
+};
+
 #endif // KISCHANNELOPTIONDATA_H

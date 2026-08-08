@@ -6,3 +6,10 @@ KisWaThicknessOptionData::KisWaThicknessOptionData()
           Checkability::Checkable)
 {
 }
+
+KisWaPressureOptionData::KisWaPressureOptionData()
+    : KisCurveOptionData(
+          KoID("WaPressureOption", i18n("WA Pressure Option")),
+          Checkability::Checkable)
+{
+}

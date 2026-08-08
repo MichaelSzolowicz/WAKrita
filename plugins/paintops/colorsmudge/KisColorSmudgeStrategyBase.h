@@ -23,7 +23,7 @@ public:
         virtual ~DabColoringStrategy() = default;
         virtual bool supportsFusedDullingBlending() const = 0;
         virtual void blendInColorRate(const KoColor &paintColor, const KoCompositeOp *colorRateOp, qreal colorRateOpacity,
-                                      KisFixedPaintDeviceSP dstDevice, const QRect &dstRect, qreal blueContrastValue = 0) const = 0;
+                                      KisFixedPaintDeviceSP dstDevice, const QRect &dstRect, qreal waThicknessValue, qreal waPressureValue) const = 0;
         virtual void blendInFusedBackgroundAndColorRateWithDulling(KisFixedPaintDeviceSP dst, KisColorSmudgeSourceSP src,
                                                                    const QRect &dstRect,
                                                                    const KoColor &preparedDullingColor,
@@ -39,7 +39,7 @@ public:
         bool supportsFusedDullingBlending() const override;
 
         void blendInColorRate(const KoColor &paintColor, const KoCompositeOp *colorRateOp, qreal colorRateOpacity,
-                              KisFixedPaintDeviceSP dstDevice, const QRect &dstRect, qreal blueContrastValue = 0) const override;
+                              KisFixedPaintDeviceSP dstDevice, const QRect &dstRect, qreal waThicknessValue, qreal waPressureValue) const override;
 
         void blendInFusedBackgroundAndColorRateWithDulling(KisFixedPaintDeviceSP dst,
                                                            KisColorSmudgeSourceSP src,
@@ -57,7 +57,7 @@ public:
         void setStampDab(KisFixedPaintDeviceSP device);
 
         void blendInColorRate(const KoColor &paintColor, const KoCompositeOp *colorRateOp, qreal colorRateOpacity,
-                              KisFixedPaintDeviceSP dstDevice, const QRect &dstRect, qreal blueContrastValue = 0) const override;
+                              KisFixedPaintDeviceSP dstDevice, const QRect &dstRect, qreal waThicknessValue, qreal waPressureValue) const override;
 
         bool supportsFusedDullingBlending() const override;
 
