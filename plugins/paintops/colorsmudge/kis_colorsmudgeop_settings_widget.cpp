@@ -109,7 +109,7 @@ KisColorSmudgeOpSettingsWidget::KisColorSmudgeOpSettingsWidget(QWidget* parent, 
     addPaintOpOption(kpowu::createRateOptionWidget());
 
     KisCurveOptionWidget *waThicknessWidget =
-        kpowu::createCurveOptionWidget(KisWaPaintOptionData(),
+        kpowu::createCurveOptionWidget(KisWaThicknessOptionData(),
                                        KisPaintOpOption::COLOR,
                                        lager::make_constant(true),
                                        rangeReader);

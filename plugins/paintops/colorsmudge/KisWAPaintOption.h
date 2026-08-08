@@ -4,6 +4,6 @@
 #include <KisStandardOptions.h>
 #include <KisWaPaintOptionData.h>
 
-using KisWaPaintOption = KisStandardOptionNoApply<KisWaPaintOptionData>;
+using KisWaThicknessOption = KisStandardOptionNoApply<KisWaThicknessOptionData>;
 
 #endif // KISCHANNELOPTION_H

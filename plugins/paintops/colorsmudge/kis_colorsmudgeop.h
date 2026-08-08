@@ -72,7 +72,7 @@ private:
     KisColorRateOption2 m_colorRateOption;
     KisSmudgeRadiusOption2 m_smudgeRadiusOption;
 
-    KisWaPaintOption m_waThicknessOption;
+    KisWaThicknessOption m_waThicknessOption;
 
     QList<KisHSVOption*> m_hsvOptions;
     KisAirbrushOptionData m_airbrushData;

@@ -3,9 +3,9 @@
 
 #include <KisCurveOptionData.h>
 
-struct KisWaPaintOptionData : KisCurveOptionData
+struct KisWaThicknessOptionData : KisCurveOptionData
 {
-    KisWaPaintOptionData();
+    KisWaThicknessOptionData();
 };
 
 #endif // KISCHANNELOPTIONDATA_H
