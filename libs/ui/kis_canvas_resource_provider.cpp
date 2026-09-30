@@ -328,6 +328,15 @@ void KisCanvasResourceProvider::slotOnScreenResolutionChanged()
 
 void KisCanvasResourceProvider::slotCanvasResourceChanged(int key, const QVariant & res)
 {
+    if(key == KoCanvasResource::Size)
+    {
+        KisPaintOpPresetSP sp = secondaryPreset();
+        if(sp)
+        {
+            sp->settings()->setPaintOpSize(m_resourceManager->resource(key).value<qreal>());
+        }
+    }
+
     switch (key) {
     case(KoCanvasResource::ForegroundColor):
         m_fGChanged = true;
