@@ -758,7 +758,7 @@ void KisPaintopBox::slotUpdateOptionsWidgetPopup()
     KisPaintOpPresetSP preset = m_resourceProvider->currentPreset();
 
     if(m_resourceProvider->editSecondBrush()) {
-        preset = m_resourceProvider->secondaryPreset();
+        preset = m_resourceProvider->secondPaintOpPreset();
     }
 
     // This happens when we have a new brush engine for which no default preset exists yet.
@@ -1443,7 +1443,7 @@ void KisPaintopBox::slotGuiChangedCurrentPreset() // Called only when UI is chan
     // Hasty fix for crash that occurs when cacheing presets while editing second brush.
     // Should rethink how CanvasResourceId::CurrentPaintOpPreset is handled in general.
     if(m_resourceProvider->editSecondBrush()) {
-        preset = m_resourceProvider->secondaryPreset();
+        preset = m_resourceProvider->secondPaintOpPreset();
     }
 
     {

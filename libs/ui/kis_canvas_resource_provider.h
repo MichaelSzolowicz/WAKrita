@@ -83,7 +83,8 @@ public:
     KisPaintOpPresetSP currentPreset() const;
     void setPaintOpPreset(const KisPaintOpPresetSP preset);
 
-    KisPaintOpPresetSP secondaryPreset() const;
+    KisPaintOpPresetSP firstPaintOpPreset() const;
+    KisPaintOpPresetSP secondPaintOpPreset() const;
 
     KisPaintOpPresetSP previousPreset() const;
     void setPreviousPaintOpPreset(const KisPaintOpPresetSP preset);

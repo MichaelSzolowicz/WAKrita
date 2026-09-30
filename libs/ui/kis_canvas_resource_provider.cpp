@@ -204,16 +204,25 @@ void KisCanvasResourceProvider::setPaintOpPreset(const KisPaintOpPresetSP preset
     QVariant v;
     v.setValue(preset);
 
-    KoCanvasResource::CanvasResourceId resource = m_resourceManager->resource(KoCanvasResource::EditSecondBrush).toBool() ? KoCanvasResource::CurrentSecondPaintOpPreset : KoCanvasResource::CurrentPaintOpPreset;
+    //KoCanvasResource::CanvasResourceId resource = m_resourceManager->resource(KoCanvasResource::EditSecondBrush).toBool() ? KoCanvasResource::SecondPaintOpPreset : KoCanvasResource::CurrentPaintOpPreset;
 
-    m_resourceManager->setResource(resource, v);
+    m_resourceManager->setResource(KoCanvasResource::CurrentPaintOpPreset, v);
+
+    KoCanvasResource::CanvasResourceId selectedPaintOp = m_resourceManager->resource(KoCanvasResource::EditSecondBrush).toBool() ? KoCanvasResource::SecondPaintOpPreset : KoCanvasResource::FirstPaintOpPreset;
+    m_resourceManager->setResource(selectedPaintOp, v);
 
     Q_EMIT sigPaintOpPresetChanged(preset);
 }
 
-KisPaintOpPresetSP KisCanvasResourceProvider::secondaryPreset() const
+KisPaintOpPresetSP KisCanvasResourceProvider::firstPaintOpPreset() const
 {
-    KisPaintOpPresetSP preset = m_resourceManager->resource(KoCanvasResource::CurrentSecondPaintOpPreset).value<KisPaintOpPresetSP>();
+    KisPaintOpPresetSP preset = m_resourceManager->resource(KoCanvasResource::FirstPaintOpPreset).value<KisPaintOpPresetSP>();
+    return preset;
+}
+
+KisPaintOpPresetSP KisCanvasResourceProvider::secondPaintOpPreset() const
+{
+    KisPaintOpPresetSP preset = m_resourceManager->resource(KoCanvasResource::SecondPaintOpPreset).value<KisPaintOpPresetSP>();
     return preset;
 }
 
@@ -330,7 +339,7 @@ void KisCanvasResourceProvider::slotCanvasResourceChanged(int key, const QVarian
 {
     if(key == KoCanvasResource::Size)
     {
-        KisPaintOpPresetSP sp = secondaryPreset();
+        KisPaintOpPresetSP sp = currentPreset() == secondPaintOpPreset() ? firstPaintOpPreset() : secondPaintOpPreset();
         if(sp)
         {
             sp->settings()->setPaintOpSize(m_resourceManager->resource(key).value<qreal>());
