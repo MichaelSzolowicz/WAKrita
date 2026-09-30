@@ -61,6 +61,7 @@ KisColorSmudgeOp::KisColorSmudgeOp(const KisPaintOpSettingsSP settings, KisPaint
     , m_colorRateOption(settings.data())
     , m_smudgeRadiusOption(settings.data())
     , m_waThicknessOption(settings.data())
+    , m_waPressureOption(settings.data())
 {
     Q_UNUSED(node);
     Q_ASSERT(painter);
@@ -215,6 +216,7 @@ KisSpacingInformation KisColorSmudgeOp::paintAt(const KisPaintInformation& info)
     }
 
     const qreal waThickness = m_waThicknessOption.isChecked() ? m_waThicknessOption.computeSizeLikeValue(info) : 1.0;
+    const qreal waPressure = m_waPressureOption.isChecked() ? m_waPressureOption.computeSizeLikeValue(info) : 1.0;
 
     const QVector<QRect> dirtyRects =
             m_strategy->paintDab(srcDabRect, m_dstDabRect,
@@ -224,7 +226,8 @@ KisSpacingInformation KisColorSmudgeOp::paintAt(const KisPaintInformation& info)
                                  maxSmudgeRate,
                                  paintThickness,
                                  smudgeRadiusPortion,
-                                 waThickness));
+                                 waThickness,
+                                 waPressure));
 
     painter()->addDirtyRects(dirtyRects);
 

@@ -48,9 +48,10 @@ void KisColorSmudgeStrategyBase::DabColoringStrategyMask::blendInColorRate(const
                                                                            const KoCompositeOp *colorRateOp,
                                                                            qreal colorRateOpacity,
                                                                            KisFixedPaintDeviceSP dstDevice,
-                                                                           const QRect &dstRect, qreal waThicknessValue) const
+                                                                           const QRect &dstRect, qreal waThicknessValue, qreal waPressureValue) const
 {
     Q_UNUSED(waThicknessValue);
+    Q_UNUSED(waPressureValue);
 
     KIS_SAFE_ASSERT_RECOVER_RETURN(*paintColor.colorSpace() == *colorRateOp->colorSpace());
 
@@ -74,7 +75,7 @@ void KisColorSmudgeStrategyBase::DabColoringStrategyStamp::blendInColorRate(cons
                                                                             const KoCompositeOp *colorRateOp,
                                                                             qreal colorRateOpacity,
                                                                             KisFixedPaintDeviceSP dstDevice,
-                                                                            const QRect &dstRect, qreal waThicknessValue) const
+                                                                            const QRect &dstRect, qreal waThicknessValue, qreal waPressureValue) const
 {
     Q_UNUSED(paintColor);
 
@@ -90,6 +91,7 @@ void KisColorSmudgeStrategyBase::DabColoringStrategyStamp::blendInColorRate(cons
         origDabCpy->colorSpace()->toQColor(src, &c);
 
         c.setGreen(c.green() * waThicknessValue);
+        c.setBlue(c.blue() * waPressureValue);
 
         origDabCpy->colorSpace()->fromQColor(c, src);
 
@@ -259,7 +261,7 @@ KisColorSmudgeStrategyBase::blendBrush(const QVector<KisPainter *> dstPainters, 
                     currentPaintColor.convertedTo(m_preparedDullingColor.colorSpace()),
                     m_colorRateOp,
                     colorRateOpacity,
-                    m_blendDevice, dstRect, options.waThicknessValue);
+                    m_blendDevice, dstRect, options.waThicknessValue, options.waPressureValue);
         }
     }
 

@@ -109,12 +109,18 @@ KisColorSmudgeOpSettingsWidget::KisColorSmudgeOpSettingsWidget(QWidget* parent, 
     addPaintOpOption(kpowu::createRateOptionWidget());
 
     KisCurveOptionWidget *waThicknessWidget =
-        kpowu::createCurveOptionWidget(KisWaPaintOptionData(),
+        kpowu::createCurveOptionWidget(KisWaThicknessOptionData(),
                                        KisPaintOpOption::COLOR,
                                        lager::make_constant(true),
                                        rangeReader);
-
     addPaintOpOption(waThicknessWidget);
+
+    KisCurveOptionWidget *waPressureWidget =
+        kpowu::createCurveOptionWidget(KisWaPressureOptionData(),
+                                       KisPaintOpOption::COLOR,
+                                       lager::make_constant(true),
+                                       rangeReader);
+    addPaintOpOption(waPressureWidget);
 
     addPaintOpOption(kpowu::createOptionWidget<KisTextureOptionWidget>(KisTextureOptionData(), resourcesInterface));
     addPaintOpOption(kpowu::createCurveOptionWidget(KisStrengthOptionData(), KisPaintOpOption::COLOR, i18n("Weak"), i18n("Strong")));
