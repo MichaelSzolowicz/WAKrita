@@ -339,10 +339,10 @@ void KisCanvasResourceProvider::slotCanvasResourceChanged(int key, const QVarian
 {
     if(key == KoCanvasResource::Size)
     {
-        KisPaintOpPresetSP sp = currentPreset() == secondPaintOpPreset() ? firstPaintOpPreset() : secondPaintOpPreset();
-        if(sp)
+        KisPaintOpPresetSP preset = m_resourceManager->resource(KoCanvasResource::PreviousPaintOpPreset).value<KisPaintOpPresetSP>();
+        if(preset)
         {
-            sp->settings()->setPaintOpSize(m_resourceManager->resource(key).value<qreal>());
+            preset->settings()->setPaintOpSize(size());
         }
     }
 

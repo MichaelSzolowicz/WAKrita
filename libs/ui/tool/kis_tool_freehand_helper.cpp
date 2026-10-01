@@ -324,8 +324,7 @@ void KisToolFreehandHelper::initPaintImpl(qreal startAngle,
     m_d->resources = new KisResourcesSnapshot(image,
                                               currentNode,
                                               resourceManager,
-                                              bounds,
-                                              KisNodeList(), resourceManager->resource(KoCanvasResource::FirstPaintOpPreset).value<KisPaintOpPresetSP>());
+                                              bounds);
     if(overrideNode) {
         m_d->resources->setCurrentNode(overrideNode);
     }
@@ -358,7 +357,7 @@ void KisToolFreehandHelper::initPaintImpl(qreal startAngle,
     // Multiple bools for testing purposes only, to make values easy to see in debugger.
     m_d->b1 = resourceManager->resource(KoCanvasResource::EnableDualBrush).toBool();
     m_d->b2 = !(resourceManager->resource(KoCanvasResource::PreviousKritaNode).value<KisNodeWSP>().isNull());
-    m_d->b3 = !(resourceManager->resource(KoCanvasResource::SecondPaintOpPreset).value<KisPaintOpPresetSP>().isNull());
+    m_d->b3 = !(resourceManager->resource(KoCanvasResource::PreviousPaintOpPreset).value<KisPaintOpPresetSP>().isNull());
     m_d->useDualBrush = m_d->b1 && m_d->b2 && m_d->b3;
 
     if(m_d->useDualBrush) {
@@ -366,7 +365,7 @@ void KisToolFreehandHelper::initPaintImpl(qreal startAngle,
                                                            resourceManager->resource(KoCanvasResource::PreviousKritaNode).value<KisNodeWSP>(),
                                                            resourceManager,
                                                            bounds,
-                                                           KisNodeList(), resourceManager->resource(KoCanvasResource::SecondPaintOpPreset).value<KisPaintOpPresetSP>());
+                                                           KisNodeList(), resourceManager->resource(KoCanvasResource::PreviousPaintOpPreset).value<KisPaintOpPresetSP>());
 
         createPainters(m_d->secondStrokeInfos,
                        startDist);
