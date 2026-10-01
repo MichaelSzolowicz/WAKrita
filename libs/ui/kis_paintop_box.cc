@@ -529,9 +529,6 @@ KisPaintopBox::KisPaintopBox(KisViewManager *viewManager, QWidget *parent, const
     m_enableDualBrushAction = m_viewManager->actionManager()->createAction("disable_dualbrush");
     connect(m_enableDualBrushAction  , SIGNAL(toggled(bool))                    , SLOT(slotEnableDualBrush(bool)));
 
-    m_editSecondBrushAction = m_viewManager->actionManager()->createAction("edit_second_brush");
-    connect(m_editSecondBrushAction   , SIGNAL(toggled(bool))                     , SLOT(slotEditSecondBrush(bool)));
-
     connect(m_hMirrorAction        , SIGNAL(toggled(bool))                    , SLOT(slotHorizontalMirrorChanged(bool)));
     connect(m_vMirrorAction        , SIGNAL(toggled(bool))                    , SLOT(slotVerticalMirrorChanged(bool)));
     connect(m_reloadAction         , SIGNAL(triggered())                        , SLOT(slotReloadPreset()));
@@ -756,10 +753,6 @@ void KisPaintopBox::setCurrentPaintop(KisPaintOpPresetSP preset)
 void KisPaintopBox::slotUpdateOptionsWidgetPopup()
 {
     KisPaintOpPresetSP preset = m_resourceProvider->currentPreset();
-
-    if(m_resourceProvider->editSecondBrush()) {
-        preset = m_resourceProvider->secondaryPreset();
-    }
 
     // This happens when we have a new brush engine for which no default preset exists yet.
     if (!preset) return;
@@ -1439,12 +1432,6 @@ void KisPaintopBox::slotReloadPreset()
 void KisPaintopBox::slotGuiChangedCurrentPreset() // Called only when UI is changed and not when preset is changed
 {
     KisPaintOpPresetSP preset = m_resourceProvider->currentPreset();
-
-    // Hasty fix for crash that occurs when cacheing presets while editing second brush.
-    // Should rethink how CanvasResourceId::CurrentPaintOpPreset is handled in general.
-    if(m_resourceProvider->editSecondBrush()) {
-        preset = m_resourceProvider->secondaryPreset();
-    }
 
     {
         /**

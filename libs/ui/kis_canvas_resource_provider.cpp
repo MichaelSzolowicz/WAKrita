@@ -204,17 +204,9 @@ void KisCanvasResourceProvider::setPaintOpPreset(const KisPaintOpPresetSP preset
     QVariant v;
     v.setValue(preset);
 
-    KoCanvasResource::CanvasResourceId resource = m_resourceManager->resource(KoCanvasResource::EditSecondBrush).toBool() ? KoCanvasResource::CurrentSecondPaintOpPreset : KoCanvasResource::CurrentPaintOpPreset;
-
-    m_resourceManager->setResource(resource, v);
+    m_resourceManager->setResource(KoCanvasResource::CurrentPaintOpPreset, v);
 
     Q_EMIT sigPaintOpPresetChanged(preset);
-}
-
-KisPaintOpPresetSP KisCanvasResourceProvider::secondaryPreset() const
-{
-    KisPaintOpPresetSP preset = m_resourceManager->resource(KoCanvasResource::CurrentSecondPaintOpPreset).value<KisPaintOpPresetSP>();
-    return preset;
 }
 
 KisPaintOpPresetSP KisCanvasResourceProvider::previousPreset() const
@@ -328,6 +320,15 @@ void KisCanvasResourceProvider::slotOnScreenResolutionChanged()
 
 void KisCanvasResourceProvider::slotCanvasResourceChanged(int key, const QVariant & res)
 {
+    if(key == KoCanvasResource::Size)
+    {
+        KisPaintOpPresetSP preset = m_resourceManager->resource(KoCanvasResource::PreviousPaintOpPreset).value<KisPaintOpPresetSP>();
+        if(preset)
+        {
+            preset->settings()->setPaintOpSize(size());
+        }
+    }
+
     switch (key) {
     case(KoCanvasResource::ForegroundColor):
         m_fGChanged = true;
