@@ -34,8 +34,6 @@ enum CanvasResourceId {
     CurrentPaintOpPreset,
     CurrentPaintOpPresetCache, ///< the cache associated with the currently active preset (this cache may be different per canvas if the preset depends on the canvas resources)
     CurrentPaintOpPresetName,
-    FirstPaintOpPreset,
-    SecondPaintOpPreset,
     CurrentGeneratorConfiguration,
     CurrentCompositeOp,
     CurrentEffectiveCompositeOp,
