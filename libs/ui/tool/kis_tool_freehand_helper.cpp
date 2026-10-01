@@ -322,9 +322,10 @@ void KisToolFreehandHelper::initPaintImpl(qreal startAngle,
     m_d->previousPaintInformation = pi;
 
     m_d->resources = new KisResourcesSnapshot(image,
-                                              currentNode,
+                                              resourceManager->resource(KoCanvasResource::PreviousKritaNode).value<KisNodeWSP>(),
                                               resourceManager,
-                                              bounds);
+                                              bounds,
+                                              KisNodeList(), resourceManager->resource(KoCanvasResource::PreviousPaintOpPreset).value<KisPaintOpPresetSP>());
     if(overrideNode) {
         m_d->resources->setCurrentNode(overrideNode);
     }
@@ -362,10 +363,9 @@ void KisToolFreehandHelper::initPaintImpl(qreal startAngle,
 
     if(m_d->useDualBrush) {
         m_d->secondaryResources = new KisResourcesSnapshot(image,
-                                                           resourceManager->resource(KoCanvasResource::PreviousKritaNode).value<KisNodeWSP>(),
+                                                           currentNode,
                                                            resourceManager,
-                                                           bounds,
-                                                           KisNodeList(), resourceManager->resource(KoCanvasResource::PreviousPaintOpPreset).value<KisPaintOpPresetSP>());
+                                                           bounds);
 
         createPainters(m_d->secondStrokeInfos,
                        startDist);

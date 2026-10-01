@@ -213,7 +213,6 @@ private:
     KisAction*                          m_reloadAction {0};
     KisAction*                          m_disablePressureAction {0};
     KisAction*                          m_enableDualBrushAction {0};
-    KisAction*                          m_editSecondBrushAction {0};
 
     QString    m_currCompositeOpID;
     KisNodeWSP m_currentNode;
