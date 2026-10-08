@@ -32,6 +32,7 @@ protected:
     KisFixedPaintDeviceSP m_maskDab;
     bool m_shouldPreserveMaskDab = true;
     QScopedPointer<KisOverlayPaintDeviceWrapper> m_layerOverlayDevice;
+    QScopedPointer<KisOverlayPaintDeviceWrapper> m_layerOverlayDeviceB;
 
 private:
     QScopedPointer<KisOverlayPaintDeviceWrapper> m_imageOverlayDevice;

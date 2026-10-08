@@ -28,8 +28,15 @@ KisColorSmudgeStrategyWithOverlay::KisColorSmudgeStrategyWithOverlay(KisPainter 
         m_layerOverlayDevice.reset(new KisOverlayPaintDeviceWrapper(painter->device(), 1, KisOverlayPaintDeviceWrapper::LazyPreciseMode, m_imageOverlayDevice->overlayColorSpace()));
         m_sourceWrapperDevice.reset(new KisColorSmudgeSourceImage(image, *m_imageOverlayDevice));
     } else {
+        //m_layerOverlayDevice.reset(new KisOverlayPaintDeviceWrapper(painter->device(), 1, KisOverlayPaintDeviceWrapper::LazyPreciseMode));
+        //m_sourceWrapperDevice.reset(new KisColorSmudgeSourcePaintDevice(*m_layerOverlayDevice));
+
         m_layerOverlayDevice.reset(new KisOverlayPaintDeviceWrapper(painter->device(), 1, KisOverlayPaintDeviceWrapper::LazyPreciseMode));
-        m_sourceWrapperDevice.reset(new KisColorSmudgeSourcePaintDevice(*m_layerOverlayDevice));
+
+        KisPaintDeviceSP tmpDevice = new KisPaintDevice(*painter->device());
+
+        m_layerOverlayDeviceB.reset(new KisOverlayPaintDeviceWrapper(tmpDevice, 1, KisOverlayPaintDeviceWrapper::LazyPreciseMode));
+        m_sourceWrapperDevice.reset(new KisColorSmudgeSourcePaintDevice(*m_layerOverlayDeviceB));
     }
 }
 
@@ -79,6 +86,7 @@ QVector<QRect> KisColorSmudgeStrategyWithOverlay::paintDab(const QRect &srcRect,
     readRects << srcRect;
 
     m_sourceWrapperDevice->readRects(readRects);
+    m_layerOverlayDevice->readRects(readRects);
 
     if (m_imageOverlayDevice) {
         /**
