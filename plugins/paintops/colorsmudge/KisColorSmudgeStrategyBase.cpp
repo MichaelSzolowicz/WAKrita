@@ -85,17 +85,38 @@ void KisColorSmudgeStrategyBase::DabColoringStrategyStamp::blendInColorRate(cons
     // begin test code
     KisFixedPaintDeviceSP origDabCpy = new KisFixedPaintDevice(*m_origDab.data());
     quint8* src = origDabCpy->data();
-    QColor c;
+    QColor pixelColor;
+
     for (qint32 i=0; i<dstRect.height()*dstRect.width(); ++i) {
 
-        origDabCpy->colorSpace()->toQColor(src, &c);
+        origDabCpy->colorSpace()->toQColor(src, &pixelColor);
 
-        c.setGreen(c.green() * waThicknessValue);
-        c.setBlue(c.blue() * waPressureValue);
+        /**
+         * Remap the a color channel of the dab to the alpha. After the dab is blended with the source smudge,
+         * the original dab alpha will mask the blended dab. Effectivly the brush acts like a color image,
+         * but the color is mapped the paint color dynamically.
+         */
+        QColor useColor = paintColor.toQColor();
+        useColor.setAlphaF(1 - pixelColor.redF());
 
-        origDabCpy->colorSpace()->fromQColor(c, src);
+        origDabCpy->colorSpace()->fromQColor(useColor, src);
 
         src += origDabCpy->pixelSize();
+
+        //c.setGreen(c.green() * waThicknessValue);
+        //c.setBlue(c.blue() * waPressureValue);
+
+        /*
+        QColor t = QColor(c.red(), c.red(), c.red(), c.red());
+
+        KoColor useColor = Arithmetic::lerp(paintColor, clearPaint, KoColor(t, origDabCpy->colorSpace()));
+
+        useColor.toQColor(&c);
+
+        if(c.alphaF() > 0) c.setAlphaF(1.0);
+
+        origDabCpy->colorSpace()->fromQColor(c, src);
+        */
     }
     // end test code
 
@@ -204,7 +225,8 @@ void KisColorSmudgeStrategyBase::sampleDullingColor(const QRect &srcRect, qreal 
 void
 KisColorSmudgeStrategyBase::blendBrush(const QVector<KisPainter *> dstPainters, KisColorSmudgeSourceSP srcSampleDevice,
                                        KisFixedPaintDeviceSP maskDab, bool preserveMaskDab, const QRect &srcRect,
-                                       const QRect &dstRect, const KoColor &currentPaintColor, KisColorSmudgeStrategyOptions options)
+                                       const QRect &dstRect, const KoColor &currentPaintColor, KisColorSmudgeStrategyOptions options,
+                                       const QVector<KisPainter*> sourcePainters)
 {
     const qreal colorRateOpacity = this->colorRateOpacity(options.opacity, options.smudgeRateValue, options.colorRateValue, options.maxPossibleSmudgeRateValue);
 
@@ -225,6 +247,8 @@ KisColorSmudgeStrategyBase::blendBrush(const QVector<KisPainter *> dstPainters, 
     DabColoringStrategy &coloringStrategy = this->coloringStrategy();
 
     const qreal dullingRateOpacity = this->dullingRateOpacity(options.opacity, options.smudgeRateValue);
+
+    const bool preserveDab = preserveMaskDab && dstPainters.size() > 1;
 
     if (colorRateOpacity > 0 &&
         m_useDullingMode &&
@@ -250,6 +274,16 @@ KisColorSmudgeStrategyBase::blendBrush(const QVector<KisPainter *> dstPainters, 
             const qreal smudgeRateOpacity = this->smearRateOpacity(options.opacity, options.smudgeRateValue);
             blendInBackgroundWithSmearing(m_blendDevice, srcSampleDevice,
                                           srcRect, dstRect, smudgeRateOpacity);
+
+            Q_FOREACH (KisPainter *sourcePainter, sourcePainters) {
+                sourcePainter->bltFixedWithFixedSelection(dstRect.x(), dstRect.y(),
+                                             m_blendDevice, maskDab,
+                                             maskDab->bounds().x(), maskDab->bounds().y(),
+                                             m_blendDevice->bounds().x(), m_blendDevice->bounds().y(),
+                                             dstRect.width(), dstRect.height());
+                sourcePainter->renderMirrorMaskSafe(dstRect, m_blendDevice, maskDab, preserveDab);
+            }
+
         } else {
             blendInBackgroundWithDulling(m_blendDevice, srcSampleDevice,
                                          dstRect,
@@ -264,8 +298,6 @@ KisColorSmudgeStrategyBase::blendBrush(const QVector<KisPainter *> dstPainters, 
                     m_blendDevice, dstRect, options.waThicknessValue, options.waPressureValue);
         }
     }
-
-    const bool preserveDab = preserveMaskDab && dstPainters.size() > 1;
 
     Q_FOREACH (KisPainter *dstPainter, dstPainters) {
         dstPainter->setOpacityF(finalPainterOpacity(options.opacity, options.smudgeRateValue));

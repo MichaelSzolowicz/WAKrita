@@ -38,6 +38,7 @@ private:
     QScopedPointer<KisOverlayPaintDeviceWrapper> m_imageOverlayDevice;
     KisColorSmudgeSourceSP m_sourceWrapperDevice;
     KisPainter m_finalPainter;
+    KisPainter m_sourcePainter;
     QScopedPointer<KisPainter> m_overlayPainter;
     bool m_smearAlpha = true;
     KisPainter *m_initializationPainter = 0;
