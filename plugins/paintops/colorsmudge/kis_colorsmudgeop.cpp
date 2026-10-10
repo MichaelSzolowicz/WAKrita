@@ -69,6 +69,8 @@ KisColorSmudgeOp::KisColorSmudgeOp(const KisPaintOpSettingsSP settings, KisPaint
     m_airbrushData.read(settings.data());
     m_overlayModeData.read(settings.data());
 
+    m_WaBrushTypeData.read(settings.data());
+
     m_gradient = painter->gradient();
 
     // useNewEngine should be true if brushApplication is not ALPHAMASK
@@ -77,6 +79,8 @@ KisColorSmudgeOp::KisColorSmudgeOp(const KisPaintOpSettingsSP settings, KisPaint
     const bool useSmearAlpha = m_smudgeRateOption.smearAlpha();
     const bool useDullingMode = m_smudgeRateOption.mode() == KisSmudgeLengthOptionData::DULLING_MODE;
     const bool useOverlayMode = m_overlayModeData.isChecked;
+
+    const bool useAsDetailBrush = m_WaBrushTypeData.brushType == KisWABrushTypeOptionData::DETAIL;
 
     m_rotationOption.applyFanCornersInfo(this);
 
@@ -103,7 +107,8 @@ KisColorSmudgeOp::KisColorSmudgeOp(const KisPaintOpSettingsSP settings, KisPaint
                                                          image,
                                                          useSmearAlpha,
                                                          useDullingMode,
-                                                         useOverlayMode));
+                                                         useOverlayMode,
+                                                         useAsDetailBrush));
     } else {
         m_strategy.reset(new KisColorSmudgeStrategyMaskLegacy(painter,
                                                               image,
@@ -218,6 +223,8 @@ KisSpacingInformation KisColorSmudgeOp::paintAt(const KisPaintInformation& info)
     const qreal waThickness = m_waThicknessOption.isChecked() ? m_waThicknessOption.computeSizeLikeValue(info) : 1.0;
     const qreal waPressure = m_waPressureOption.isChecked() ? m_waPressureOption.computeSizeLikeValue(info) : 1.0;
 
+    const bool useAsDetailBrush = m_WaBrushTypeData.brushType == KisWABrushTypeOptionData::DETAIL;
+
     const QVector<QRect> dirtyRects =
             m_strategy->paintDab(srcDabRect, m_dstDabRect,
                                  paintColor,
@@ -227,7 +234,8 @@ KisSpacingInformation KisColorSmudgeOp::paintAt(const KisPaintInformation& info)
                                  paintThickness,
                                  smudgeRadiusPortion,
                                  waThickness,
-                                 waPressure));
+                                 waPressure,
+                                 useAsDetailBrush));
 
     painter()->addDirtyRects(dirtyRects);
 

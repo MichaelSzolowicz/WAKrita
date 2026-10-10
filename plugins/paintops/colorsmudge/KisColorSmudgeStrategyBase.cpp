@@ -48,10 +48,11 @@ void KisColorSmudgeStrategyBase::DabColoringStrategyMask::blendInColorRate(const
                                                                            const KoCompositeOp *colorRateOp,
                                                                            qreal colorRateOpacity,
                                                                            KisFixedPaintDeviceSP dstDevice,
-                                                                           const QRect &dstRect, qreal waThicknessValue, qreal waPressureValue) const
+                                                                           const QRect &dstRect, qreal waThicknessValue, qreal waPressureValue, bool useAsDetailBrush) const
 {
     Q_UNUSED(waThicknessValue);
     Q_UNUSED(waPressureValue);
+    Q_UNUSED(useAsDetailBrush);
 
     KIS_SAFE_ASSERT_RECOVER_RETURN(*paintColor.colorSpace() == *colorRateOp->colorSpace());
 
@@ -75,7 +76,10 @@ void KisColorSmudgeStrategyBase::DabColoringStrategyStamp::blendInColorRate(cons
                                                                             const KoCompositeOp *colorRateOp,
                                                                             qreal colorRateOpacity,
                                                                             KisFixedPaintDeviceSP dstDevice,
-                                                                            const QRect &dstRect, qreal waThicknessValue, qreal waPressureValue) const
+                                                                            const QRect &dstRect,
+                                                                            qreal waThicknessValue,
+                                                                            qreal waPressureValue,
+                                                                            bool useAsDetailBrush) const
 {
     Q_UNUSED(paintColor);
 
@@ -96,27 +100,21 @@ void KisColorSmudgeStrategyBase::DabColoringStrategyStamp::blendInColorRate(cons
          * the original dab alpha will mask the blended dab. Effectivly the brush acts like a color image,
          * but the color is mapped the paint color dynamically.
          */
-        QColor useColor = paintColor.toQColor();
-        useColor.setAlphaF(1 - pixelColor.redF());
+        if(!useAsDetailBrush)
+        {
+            QColor useColor = paintColor.toQColor();
+            useColor.setAlphaF(1 - pixelColor.redF());
 
-        origDabCpy->colorSpace()->fromQColor(useColor, src);
+            origDabCpy->colorSpace()->fromQColor(useColor, src);
+        }
+        else {
+            pixelColor.setGreen(pixelColor.green() * waThicknessValue);
+            pixelColor.setBlue(pixelColor.blue() * waPressureValue);
+
+            origDabCpy->colorSpace()->fromQColor(pixelColor, src);
+        }
 
         src += origDabCpy->pixelSize();
-
-        //c.setGreen(c.green() * waThicknessValue);
-        //c.setBlue(c.blue() * waPressureValue);
-
-        /*
-        QColor t = QColor(c.red(), c.red(), c.red(), c.red());
-
-        KoColor useColor = Arithmetic::lerp(paintColor, clearPaint, KoColor(t, origDabCpy->colorSpace()));
-
-        useColor.toQColor(&c);
-
-        if(c.alphaF() > 0) c.setAlphaF(1.0);
-
-        origDabCpy->colorSpace()->fromQColor(c, src);
-        */
     }
     // end test code
 
@@ -283,7 +281,6 @@ KisColorSmudgeStrategyBase::blendBrush(const QVector<KisPainter *> dstPainters, 
                                              dstRect.width(), dstRect.height());
                 sourcePainter->renderMirrorMaskSafe(dstRect, m_blendDevice, maskDab, preserveDab);
             }
-
         } else {
             blendInBackgroundWithDulling(m_blendDevice, srcSampleDevice,
                                          dstRect,
@@ -295,7 +292,7 @@ KisColorSmudgeStrategyBase::blendBrush(const QVector<KisPainter *> dstPainters, 
                     currentPaintColor.convertedTo(m_preparedDullingColor.colorSpace()),
                     m_colorRateOp,
                     colorRateOpacity,
-                    m_blendDevice, dstRect, options.waThicknessValue, options.waPressureValue);
+                    m_blendDevice, dstRect, options.waThicknessValue, options.waPressureValue, options.useAsDetailBrush);
         }
     }
 

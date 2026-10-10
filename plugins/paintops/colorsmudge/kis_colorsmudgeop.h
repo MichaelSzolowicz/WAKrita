@@ -31,6 +31,8 @@
 
 #include <KisWaPaintOption.h>
 
+#include <KisWABrushTypeOptionData.h>
+
 class QPointF;
 
 class KisBrushBasedPaintOpSettings;
@@ -78,6 +80,8 @@ private:
     QList<KisHSVOption*> m_hsvOptions;
     KisAirbrushOptionData m_airbrushData;
     KisSmudgeOverlayModeOptionData m_overlayModeData;
+
+    KisWABrushTypeOptionData m_WaBrushTypeData;
 
     QRect                     m_dstDabRect;
     QPointF                   m_lastPaintPos;

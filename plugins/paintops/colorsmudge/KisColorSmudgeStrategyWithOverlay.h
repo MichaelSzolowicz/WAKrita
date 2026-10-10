@@ -18,7 +18,8 @@ public:
                                       KisImageSP image,
                                       bool smearAlpha,
                                       bool useDullingMode,
-                                      bool useOverlayMode);
+                                      bool useOverlayMode,
+                                      bool useAsDetailBrus = false);
 
     virtual ~KisColorSmudgeStrategyWithOverlay();
 

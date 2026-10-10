@@ -17,7 +17,7 @@
 
 KisColorSmudgeStrategyWithOverlay::KisColorSmudgeStrategyWithOverlay(KisPainter *painter, KisImageSP image,
                                                                      bool smearAlpha, bool useDullingMode,
-                                                                     bool useOverlayMode)
+                                                                     bool useOverlayMode, bool useAsDetailBrush)
         : KisColorSmudgeStrategyBase(useDullingMode)
         , m_maskDab(new KisFixedPaintDevice(KoColorSpaceRegistry::instance()->alpha8()))
         , m_smearAlpha(smearAlpha)
@@ -30,14 +30,18 @@ KisColorSmudgeStrategyWithOverlay::KisColorSmudgeStrategyWithOverlay(KisPainter 
     } else {
         m_layerOverlayDevice.reset(new KisOverlayPaintDeviceWrapper(painter->device(), 1, KisOverlayPaintDeviceWrapper::LazyPreciseMode));
 
-        /**
-         * Create a copy of the source layer so we do not need write the brush color rate to the smudge source.
-         * This prevents the brush color from blocking out the pixels underneath.
-         */
-        KisPaintDeviceSP tmpDevice = new KisPaintDevice(*painter->device());
+        if(!useAsDetailBrush){
 
-        m_layerOverlayDeviceB.reset(new KisOverlayPaintDeviceWrapper(tmpDevice, 1, KisOverlayPaintDeviceWrapper::LazyPreciseMode));
-        m_sourceWrapperDevice.reset(new KisColorSmudgeSourcePaintDevice(*m_layerOverlayDeviceB));
+            /**
+             * Create a copy of the source layer so we do not need write the brush color rate to the smudge source.
+             * This prevents the brush color from blocking out the pixels underneath.
+             */
+            m_layerOverlayDeviceB.reset(new KisOverlayPaintDeviceWrapper(painter->device(), 1, KisOverlayPaintDeviceWrapper::LazyPreciseMode));
+            m_sourceWrapperDevice.reset(new KisColorSmudgeSourcePaintDevice(*m_layerOverlayDeviceB));
+        }
+        else {
+            m_sourceWrapperDevice.reset(new KisColorSmudgeSourcePaintDevice(*m_layerOverlayDevice));
+        }
     }
 }
 
@@ -57,11 +61,13 @@ void KisColorSmudgeStrategyWithOverlay::initializePainting()
     m_finalPainter.setChannelFlags(m_initializationPainter->channelFlags());
     m_finalPainter.copyMirrorInformationFrom(m_initializationPainter);
 
-    m_sourcePainter.begin(m_layerOverlayDeviceB->overlay());
-    m_sourcePainter.setCompositeOpId(finalCompositeOp(m_smearAlpha));
-    m_sourcePainter.setSelection(m_initializationPainter->selection());
-    m_sourcePainter.setChannelFlags(m_initializationPainter->channelFlags());
-    m_sourcePainter.copyMirrorInformationFrom(m_initializationPainter);
+    if(m_layerOverlayDeviceB){
+        m_sourcePainter.begin(m_layerOverlayDeviceB->overlay());
+        m_sourcePainter.setCompositeOpId(finalCompositeOp(m_smearAlpha));
+        m_sourcePainter.setSelection(m_initializationPainter->selection());
+        m_sourcePainter.setChannelFlags(m_initializationPainter->channelFlags());
+        m_sourcePainter.copyMirrorInformationFrom(m_initializationPainter);
+    }
 
     if (m_imageOverlayDevice) {
         m_overlayPainter.reset(new KisPainter());
