@@ -18,7 +18,8 @@ public:
                                       KisImageSP image,
                                       bool smearAlpha,
                                       bool useDullingMode,
-                                      bool useOverlayMode);
+                                      bool useOverlayMode,
+                                      bool useAsDetailBrus = false);
 
     virtual ~KisColorSmudgeStrategyWithOverlay();
 
@@ -32,11 +33,13 @@ protected:
     KisFixedPaintDeviceSP m_maskDab;
     bool m_shouldPreserveMaskDab = true;
     QScopedPointer<KisOverlayPaintDeviceWrapper> m_layerOverlayDevice;
+    QScopedPointer<KisOverlayPaintDeviceWrapper> m_layerOverlayDeviceB;
 
 private:
     QScopedPointer<KisOverlayPaintDeviceWrapper> m_imageOverlayDevice;
     KisColorSmudgeSourceSP m_sourceWrapperDevice;
     KisPainter m_finalPainter;
+    KisPainter m_sourcePainter;
     QScopedPointer<KisPainter> m_overlayPainter;
     bool m_smearAlpha = true;
     KisPainter *m_initializationPainter = 0;

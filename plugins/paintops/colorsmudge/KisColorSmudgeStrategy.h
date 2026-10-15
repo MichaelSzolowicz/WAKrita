@@ -20,6 +20,7 @@ struct KisColorSmudgeStrategyOptions
     qreal smudgeRadiusValue;
     qreal waThicknessValue;
     qreal waPressureValue;
+    bool useAsDetailBrush;
 
     KisColorSmudgeStrategyOptions(qreal opacity,
                                   qreal colorRateValue,
@@ -28,7 +29,8 @@ struct KisColorSmudgeStrategyOptions
                                   qreal lightnessStrengthValue,
                                   qreal smudgeRadiusValue,
                                   qreal waThicknessValue,
-                                  qreal waPressureValue) :
+                                  qreal waPressureValue,
+                                  bool useAsDetailBrush) :
         opacity(opacity)
         ,   colorRateValue(colorRateValue)
         ,   smudgeRateValue(smudgeRateValue)
@@ -37,6 +39,7 @@ struct KisColorSmudgeStrategyOptions
         ,   smudgeRadiusValue(smudgeRadiusValue)
         ,   waThicknessValue(waThicknessValue)
         ,   waPressureValue(waPressureValue)
+        ,   useAsDetailBrush(useAsDetailBrush)
     {
 
     }

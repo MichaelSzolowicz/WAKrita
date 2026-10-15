@@ -17,7 +17,7 @@
 
 KisColorSmudgeStrategyWithOverlay::KisColorSmudgeStrategyWithOverlay(KisPainter *painter, KisImageSP image,
                                                                      bool smearAlpha, bool useDullingMode,
-                                                                     bool useOverlayMode)
+                                                                     bool useOverlayMode, bool useAsDetailBrush)
         : KisColorSmudgeStrategyBase(useDullingMode)
         , m_maskDab(new KisFixedPaintDevice(KoColorSpaceRegistry::instance()->alpha8()))
         , m_smearAlpha(smearAlpha)
@@ -29,7 +29,19 @@ KisColorSmudgeStrategyWithOverlay::KisColorSmudgeStrategyWithOverlay(KisPainter 
         m_sourceWrapperDevice.reset(new KisColorSmudgeSourceImage(image, *m_imageOverlayDevice));
     } else {
         m_layerOverlayDevice.reset(new KisOverlayPaintDeviceWrapper(painter->device(), 1, KisOverlayPaintDeviceWrapper::LazyPreciseMode));
-        m_sourceWrapperDevice.reset(new KisColorSmudgeSourcePaintDevice(*m_layerOverlayDevice));
+
+        if(!useAsDetailBrush){
+
+            /**
+             * Create a copy of the source layer so we do not need write the brush color rate to the smudge source.
+             * This prevents the brush color from blocking out the pixels underneath.
+             */
+            m_layerOverlayDeviceB.reset(new KisOverlayPaintDeviceWrapper(painter->device(), 1, KisOverlayPaintDeviceWrapper::LazyPreciseMode));
+            m_sourceWrapperDevice.reset(new KisColorSmudgeSourcePaintDevice(*m_layerOverlayDeviceB));
+        }
+        else {
+            m_sourceWrapperDevice.reset(new KisColorSmudgeSourcePaintDevice(*m_layerOverlayDevice));
+        }
     }
 }
 
@@ -48,6 +60,14 @@ void KisColorSmudgeStrategyWithOverlay::initializePainting()
     m_finalPainter.setSelection(m_initializationPainter->selection());
     m_finalPainter.setChannelFlags(m_initializationPainter->channelFlags());
     m_finalPainter.copyMirrorInformationFrom(m_initializationPainter);
+
+    if(m_layerOverlayDeviceB){
+        m_sourcePainter.begin(m_layerOverlayDeviceB->overlay());
+        m_sourcePainter.setCompositeOpId(finalCompositeOp(m_smearAlpha));
+        m_sourcePainter.setSelection(m_initializationPainter->selection());
+        m_sourcePainter.setChannelFlags(m_initializationPainter->channelFlags());
+        m_sourcePainter.copyMirrorInformationFrom(m_initializationPainter);
+    }
 
     if (m_imageOverlayDevice) {
         m_overlayPainter.reset(new KisPainter());
@@ -78,7 +98,12 @@ QVector<QRect> KisColorSmudgeStrategyWithOverlay::paintDab(const QRect &srcRect,
     readRects << mirroredRects;
     readRects << srcRect;
 
+    /**
+     * source wrapper and layer overlay do not point to the same paint device, so call
+     * read rects on both.
+     */
     m_sourceWrapperDevice->readRects(readRects);
+    m_layerOverlayDevice->readRects(readRects);
 
     if (m_imageOverlayDevice) {
         /**
@@ -88,12 +113,20 @@ QVector<QRect> KisColorSmudgeStrategyWithOverlay::paintDab(const QRect &srcRect,
         m_layerOverlayDevice->readRects(readRects);
     }
 
+    /**
+     * The source layer color will be smudged into source painter, but not the brush color rate.
+     * This prevents the brush color from blocking out the pixels underneath.
+     */
+    QVector<KisPainter*> sourcePainters;
+    sourcePainters << &m_sourcePainter;
+
     blendBrush(finalPainters(),
                m_sourceWrapperDevice,
                m_maskDab, m_shouldPreserveMaskDab,
                srcRect, dstRect,
                currentPaintColor,
-               options);
+               options,
+               sourcePainters);
 
     m_layerOverlayDevice->writeRects(mirroredRects);
 

@@ -30,7 +30,7 @@
 #include <KisZug.h>
 
 #include <KisWaPaintOptionData.h>
-
+#include <KisWABrushTypeOptionWidget.h>
 
 struct KisColorSmudgeOpSettingsWidget::Private
 {
@@ -107,6 +107,8 @@ KisColorSmudgeOpSettingsWidget::KisColorSmudgeOpSettingsWidget(QWidget* parent, 
 
     addPaintOpOption(kpowu::createOptionWidget<KisAirbrushOptionWidget>());
     addPaintOpOption(kpowu::createRateOptionWidget());
+
+    addPaintOpOption(kpowu::createOptionWidget<KisWABrushTypeOptionWidget>());
 
     KisCurveOptionWidget *waThicknessWidget =
         kpowu::createCurveOptionWidget(KisWaThicknessOptionData(),
